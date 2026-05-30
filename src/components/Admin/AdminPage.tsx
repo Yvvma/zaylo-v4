@@ -12,7 +12,6 @@ export default function AdminPage() {
   const [uploadLoading, setUploadLoading] = useState(false);
   const [uploadError, setUploadError] = useState("");
   const [uploadedFile, setUploadedFile] = useState("");
-  const [githubUrl, setGithubUrl] = useState("");
   const fileRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -80,7 +79,6 @@ export default function AdminPage() {
         setUploadError(data.error || "Erro ao fazer upload");
       } else {
         setUploadedFile(file.name);
-        setGithubUrl(data.url || "");
         setPageState("success");
         setFile(null);
         if (fileRef.current) fileRef.current.value = "";
@@ -170,16 +168,6 @@ export default function AdminPage() {
           <p className="text-sm text-gray-400 text-center mb-4">
             {uploadedFile} foi publicado com sucesso.
           </p>
-          {githubUrl && (
-            <a
-              href={githubUrl}
-              target="_blank"
-              rel="noreferrer"
-              className="block text-center text-sm text-blue-400 hover:text-blue-300 underline mb-4"
-            >
-              Ver no GitHub
-            </a>
-          )}
           <button
             onClick={() => setPageState("upload")}
             className="w-full border border-gray-700 text-gray-300 text-sm font-medium rounded-xl py-2.5 hover:bg-gray-800 transition-colors"
@@ -252,7 +240,7 @@ export default function AdminPage() {
         </button>
 
         <p className="text-center text-xs text-gray-600 mt-3">
-          O post será enviado para o GitHub e publicado no blog
+          O post será publicado no blog
         </p>
       </div>
     </div>
