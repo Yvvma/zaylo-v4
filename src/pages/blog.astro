@@ -5,6 +5,7 @@ import BlogHeader from "../components/blog/BlogHeader";
 import { getCollection } from "astro:content";
 
 const posts = await getCollection("blog");
+const sortedPosts = posts.sort((a, b) => b.data.date.localeCompare(a.data.date));
 ---
 
 <Layout title="Industrie">
@@ -13,7 +14,7 @@ const posts = await getCollection("blog");
       <BlogHeader client:load />
     </div>
     <div class="relative">
-      <BlogList posts={posts} client:load />
+      <BlogList posts={sortedPosts} client:load />
     </div>
   </div>
 </Layout>
