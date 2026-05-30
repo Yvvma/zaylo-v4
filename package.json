@@ -1,0 +1,38 @@
+{
+  "name": "eccentric-ephemera",
+  "type": "module",
+  "version": "0.0.1",
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "astro": "astro"
+  },
+  "dependencies": {
+    "@api/melhorenvio": "file:.api/apis/melhorenvio",
+    "@astrojs/react": "^4.2.4",
+    "@astrojs/vercel": "^9.0.5",
+    "@heroicons/react": "^2.2.0",
+    "@libsql/client": "^0.17.3",
+    "@stripe/react-stripe-js": "^3.7.0",
+    "@stripe/stripe-js": "^7.3.1",
+    "@tailwindcss/vite": "^4.1.4",
+    "@tursodatabase/database": "^0.6.0",
+    "@types/react": "^19.1.2",
+    "@types/react-dom": "^19.1.2",
+    "astro": "^5.7.3",
+    "axios": "^1.16.0",
+    "embla-carousel-react": "^8.6.0",
+    "framer-motion": "^12.7.4",
+    "lucide-react": "^0.511.0",
+    "react": "^19.1.0",
+    "react-dom": "^19.1.0",
+    "react-markdown": "^10.1.0",
+    "rehype-raw": "^7.0.0",
+    "remark-breaks": "^4.0.0",
+    "resend": "^4.0.0",
+    "stripe": "^18.2.1",
+    "swiper": "^11.2.8",
+    "tailwindcss": "^4.1.4"
+  }
+}

@@ -1,0 +1,22 @@
+---
+import Layout from '../layouts/Layout.astro';
+import ContentPageWrapper from '../components/UI/ContentPageWrapper'; // Ensure correct path
+---
+
+<Layout title="Payment">
+  <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-element-bundle.min.js"></script>
+
+  <section class="w-full flex flex-col gap-12 m-8 px-4 md:px-16 py-16 sm:py-16 text-white bg-[#232222]/80 justify-center items-start ml-8 mr-8">
+    <div class="text-right">
+        <h1 class="text-4xl font-bold mb-6 fill-over-stroke font-heading stroke-4 stroke-black">Payment</h1>
+    </div>
+
+    <div class="w-full flex justify-center items-center">
+      <ContentPageWrapper title="Accepted Payment Methods" client:load>
+        <p>We accept major credit cards including Visa, MasterCard, American Express, and Discover.</p>
+        <p>Apple Pay is also available as a secure payment option.</p>
+        <p>All transactions are securely processed through Stripe.</p>
+      </ContentPageWrapper>
+    </div>
+  </section>
+</Layout>

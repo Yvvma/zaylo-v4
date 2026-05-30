@@ -1,0 +1,10 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import ForgotPasswordPage from '../../components/Login/ForgotPasswordPage';
+---
+
+<Layout title="Forgot Password">
+  <section class="w-full flex flex-col gap-12 m-8 px-4 md:px-16 py-16 sm:py-48 text-white bg-[#232222]/80 justify-center items-start ml-8 mr-8">
+    <ForgotPasswordPage client:load />
+  </section>
+</Layout>

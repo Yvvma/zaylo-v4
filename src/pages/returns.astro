@@ -1,0 +1,22 @@
+---
+import Layout from '../layouts/Layout.astro';
+import ContentPageWrapper from '../components/UI/ContentPageWrapper';
+---
+
+<Layout title="Returns">
+  <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-element-bundle.min.js"></script>
+
+  <section class="w-full flex flex-col gap-12 m-8 px-4 md:px-16 py-16 sm:py-16 text-white bg-[#232222]/80 justify-center items-start ml-8 mr-8">
+    <div class="text-right">
+        <h1 class="text-4xl font-bold mb-6 fill-over-stroke font-heading stroke-4 stroke-black">Returns</h1>
+    </div>
+
+    <div class="w-full flex justify-center items-center">
+      <ContentPageWrapper title="Return Policy" client:load>
+        <p>You can return unused items in their original condition within 30 days of purchase for a full refund or exchange.</p>
+        <p>Customers are responsible for return shipping costs unless the item is defective or an error occurred on our part.</p>
+        <p>Please contact us at <a href="mailto:support@litcoskt.com " class="text-[#02BED0]">support@litcoskt.com</a> to initiate a return.</p>
+      </ContentPageWrapper>
+    </div>
+  </section>
+</Layout>

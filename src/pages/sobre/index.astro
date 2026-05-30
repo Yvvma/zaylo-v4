@@ -1,0 +1,27 @@
+---
+import TextTwoContainer from '../../components/Sobre/TextTwoContainer';
+import Layout from '../../layouts/Layout.astro';
+import MainVideoContainer from '../../components/Sobre/MainVideo';
+import TextThreeContainer from '../../components/Sobre/TextThreeContainer';
+import TextFourContainer from '../../components/Sobre/TextFourContainer';
+import TextFiveContainer from '../../components/Sobre/TextFiveContainer';
+---
+
+<Layout title="Sobre">
+  
+
+  <div class="w-full h-full bg-black flex justify-center items-center  flex-col">
+
+    <MainVideoContainer client:load/>
+    <div class="flex sm:flex-row flex-col h-full w-full">
+      <TextTwoContainer client:load/>
+      <TextThreeContainer client:load/>
+    </div>
+
+    <div class="flex sm:flex-row flex-col h-full w-full">
+    <TextFourContainer client:load/>
+    <TextFiveContainer client:load/>
+    </div>
+
+  </div>
+</Layout>

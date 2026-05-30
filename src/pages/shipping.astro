@@ -1,0 +1,37 @@
+---
+import Layout from '../layouts/Layout.astro';
+import ContentPageWrapper from '../components/UI/ContentPageWrapper';
+---
+
+<Layout title="Shipping - Litco Skateboarding">
+  <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-element-bundle.min.js"></script>
+
+  
+  
+
+
+    <section class="w-full flex flex-col  gap-12 m-8 px-4 md:px-16 py-16 sm:py-16 text-white bg-[#232222]/80 justify-center items-start ml-8 mr-8">
+    
+
+      <!-- Hero Checkout -->
+      
+
+        
+          <div class="text-right">
+              <h1 class="text-4xl font-bold mb-6 fill-over-stroke font-heading stroke-4 stroke-black">Shipping</h1>
+          </div>
+        </div>
+
+        <div class="w-full flex justify-center items-center">
+      
+
+      <!-- Checkout Form React -->
+        <ContentPageWrapper title="Shipping Information" client:load>
+      <p>We ship worldwide with tracking included. Orders are processed within 2-3 business days.</p>
+      <p>Shipping times vary based on location and method selected at checkout.</p>
+    </ContentPageWrapper>
+      </div>
+    
+  
+  </section>
+</Layout>

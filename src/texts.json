@@ -1,0 +1,311 @@
+{
+  "menu": {
+  "home": "Home",
+  "products":"Produtos",
+  "about_us": "Quem Somos",
+  "privacidade": "POLiTICA DE PRIVACIDADE",
+  "contact": "CONTATO",
+  "resell": "Seja um revendedor Zaylo",
+  "pagamento":"Pagamentos",
+  "envios":"Envios",
+  "faq":"FAQ",
+  "contato":"Contato",
+  "blog":"Blog"
+
+},  
+  "home":{
+    "bio":"",
+    "cta-01":"dogs makes us",
+    "cta-02":"more human.",
+    "explore":"Explorar",
+    "arrivals":"Novas Coleções",
+    "zaylo":"Zaylo",
+    "buy":"Comprar Agora",
+    "vest":"O peitoral OZY.VEST transforma a experiência da categoria, elevando-a a um novo padrão.",
+    "design":"Onde design encontra revolução",
+    "ozy":"OZY.VEST",
+    "more":"Veja Mais",
+    "freedom":"Freedom Leash",
+    "liberdade":"Liberdade em movimento",
+    "freedom-text":"Cada passeio é uma experiência de controle inteligente, unindo liberdade e elegância.",
+    "presenca":"Presença que conecta.",
+    "crew":"Junte-se a Zaylo Crew e compartilhe sofisticação, cuidado e liberdade em cada momento."
+    },
+    "loja":{
+      "acessorios":"Acessórios",
+      "treinadores":"Treinadores",
+      "size":"Tamanho",
+      "tabela":"Tabela de Medidas",
+      "carrinho":"Adicionar ao Carrinho",
+      "more":"Mais Detalhes",
+      "cor":"Cor",
+      "sizeCaution":"Certifique-se de que o peitoral está devidamente ajustado para o tamanho do seu cachorro. Isso garantirá um encaixe seguro, evitando que ele se machuque.",
+      "peitoral":"Peitoral",
+      "nuca":"Nuca",
+      "cart":"Carrinho",
+      "vazio":"Seu carrinho está vazio",
+      "quantidade":"Quantidade"
+    },
+    "resell":{
+      "cta-01":"Seja um revendedor Zaylo",
+      "cta-02":"Seja parceiro Zaylo e tenha acesso a lançamentos exclusivos, design avançado e tecnologia de ponta.",
+      "products-cta-01":"Conheça os produtos Zaylo",
+      "products-cta-02":"Descubra a coleção completa de produtos Zaylo, projetados para elevar a experiência do seu pet a um novo nível.",
+      "publicidade-cta-01":"Publicidade",
+      "publicidade-cta-02":"Conheça nossos parceiros e veja como a Zaylo está presente em todo o Brasil.",
+      "historias-cta-01":"Histórias de Sucesso",
+      "historias-cta-02":"Conheça as histórias inspiradoras de nossos clientes."
+    },
+    "empresas":{
+      "cobasi":"Conheça um de nossos parceiros de negócios a Cobasi.",
+      "produtos":"Produtos Zaylo",
+      "produtos-release":"Conheça os produtos Zaylo, projetados para elevar a experiência do seu pet a um novo nível.",
+      "historias":"Histórias que nos Inspiram",
+      "historias-release":"Conheça as histórias inspiradoras de nossos clientes.",
+      "veja-mais":"Veja Mais",
+      "contato":"Entre em contato nossa equipe",
+      "historia-01-title":"Porque amor não precisa de visão",
+      "historia-01-subtitle":"Conheça a história de Tekinha",
+      "historia-02-title":"Lealdade que não se compra",
+      "historia-02-subtitle":"Os cachorros te escolhem pelo coração",
+      "leash-title":"Leash",
+      "peitoral-title":"Ozy.Vest",
+      "bowl-title":"Steel Bowl",
+      "leash":"Conheça as coleiras da Zaylo.",
+      "peitoral":"Com o OZY.VEST, seu pet estará sempre estiloso e protegido.",
+      "bowl":"O Steel Bowl é a combinação perfeita de estilo e funcionalidade."
+    },
+    "nav":{
+      "revendedor":"Seja um Parceiro Zaylo",
+      "produtos":"Conheça nossos produtos",
+      "historias":"Histórias que nos inspiram",
+      "contato":"Entre em contato"
+    },
+
+    "about": {
+    "title": "Sobre a Zaylo",
+    "text-01": "Há quatro anos, minha vida ganhou um novo sentido quando o Zico, meu cachorro, passou a fazer parte dela. Foi nesse momento que percebi o poder transformador que os cães têm na vida de um ser humano. A conexão entre nós e eles é única — e foi dessa inspiração que nasceu a Zaylo.",
+    "text-02": "Identifiquei no mercado pet uma grande oportunidade: oferecer exclusividade e sofisticação para tutores exigentes, que valorizam qualidade, design e acessórios diferenciados. Em meio a um setor em plena expansão, onde quase tudo parecia mais do mesmo, decidi criar algo realmente único.",
+    "text-03": "Foi assim que deixei minha carreira de ator em pausa e mergulhei de cabeça nesse projeto. Após 3 anos e 4 meses de dedicação intensa, noites em claro e muitas renúncias, a Zaylo nasceu. Logo nos primeiros dias, ficou claro que não éramos apenas mais uma marca: viemos para lançar um novo conceito e reafirmar o que nos move — o amor incondicional pelos cachorros.",
+    "text-04": "Nosso propósito é celebrar essa paixão universal. Mais do que produtos excepcionais, criamos memórias, aventuras e momentos que ficam para sempre. A Zaylo é um movimento que une pessoas que reconhecem o valor da amizade leal e da companhia inabalável dos cães.",
+    "text-05": "Escolhemos o Rio de Janeiro como ponto de partida, onde Brasil, pessoas e cachorros se encontram, para mostrar ao mundo o verdadeiro motivo da nossa existência: os cães nos tornam mais humanos.",
+    "text-06": "Agradeço a todos que acreditaram nessa jornada — amigos, designers, família — e especialmente ao Zico e à Ana Clara, que estiveram ao meu lado em cada passo. Sem vocês, nada disso teria sido possível.",
+    "text-07":"Com carinho,",
+    "text-08":"Fabio Beltrão | Fundador",
+    "continue":"Continue"
+  },
+
+  
+  "privacy": {
+    "title": "Política de Privacidade",
+    "updated": "ÚLTIMA ATUALIZAÇÃO: 11/09/2023",
+
+    "intro": {
+      "01": "A \"zaylo comercial ltda\" pessoa jurídica de direito privado, com sede na Rua Maestro Demétrio Kipman 102, Bragança Paulista - SP, cep 12902-130 inscrita no CNPJ/MF sob o nº 49.554.517/0001-11, leva a sua privacidade a sério e zela pela segurança e proteção de dados de todos os seus clientes, parceiros, fornecedores e cliente do site zaylo.com.br e qualquer outro site, Loja ou aplicativo operado pela zaylo.",
+      "02": "Esta Política de Privacidade destina-se a informálo sobre o modo como nós utilizamos e divulgamos informações coletadas em suas visitas à nossa Loja e em mensagens que trocamos com você.",
+      "03": "AO ACESSAR A LOJA, ENVIAR COMUNICAÇÕES OU FORNECER QUALQUER TIPO DE DADO PESSOAL, VOCÊ DECLARA ESTAR CIENTE E DE ACORDO COM ESTA POLÍTICA DE PRIVACIDADE.",
+      "04": "Esta Política fornece uma visão geral de nossas práticas de privacidade e dos direitos que você pode exercer.",
+      "05": "Em caso de dúvidas, entre em contato pelo telefone (21) 3559-2431 ou pelo e-mail help@zaylo.com.br.",
+      "06": "Esta Política não se aplica a aplicativos, produtos, serviços ou sites de terceiros.",
+      "07": "Ao fornecer dados de terceiros, você declara ter autorização para tal."
+    },
+
+    "definitions": {
+      "title": "1. Definições",
+      "01": "“Dados Pessoais” significa qualquer informação que identifique uma pessoa natural.",
+      "02": "“Dados Pessoais Sensíveis” são dados sobre origem racial, religião, opinião política, saúde ou dados biométricos.",
+      "03": "“Tratamento de Dados Pessoais” significa qualquer operação realizada com Dados Pessoais.",
+      "04": "“Leis de Proteção de Dados” inclui a Lei nº 13.709/18 (LGPD)."
+    },
+
+    "usage": {
+      "title": "2. Uso de Dados Pessoais",
+      "01": "Gerenciar o relacionamento com o usuário e melhorar sua experiência.",
+      "02": "Viabilizar a aquisição de produtos e serviços.",
+      "03": "Confirmar ou corrigir informações.",
+      "04": "Enviar comunicações de interesse.",
+      "05": "Personalizar a experiência na Loja.",
+      "06": "Entrar em contato por meios eletrônicos.",
+      "07": "A PLATAFORMA NÃO SE DESTINA A MENORES DE 18 ANOS."
+    },
+
+    "collection": {
+      "3": {
+        "title": "3. Não fornecimento de Dados Pessoais",
+        "items": [
+          "O usuário não é obrigado a fornecer Dados Pessoais. A recusa pode limitar o acesso a funcionalidades da Loja."
+        ]
+      },
+
+      "4": {
+        "title": "4. Dados coletados",
+        "sections": {
+          "4.1": {
+            "title": "Navegação sem cadastro",
+            "items": [
+              "A navegação é permitida sem cadastro.",
+              "Algumas funcionalidades exigem envio de Dados Pessoais."
+            ]
+          },
+          "4.2": {
+            "title": "Contato com a Loja",
+            "items": [
+              "Nome, telefone, cidade, estado e e-mail.",
+              "Informações enviadas via formulários."
+            ]
+          },
+          "4.3": {
+            "title": "Navegação",
+            "items": [
+              "Geolocalização.",
+              "Preferências e interesses.",
+              "Dados de navegação, IP e dispositivo.",
+              "Dados anônimos e agregados."
+            ]
+          },
+          "4.4": {
+            "title": "Dados sensíveis",
+            "items": [
+              "Não coletamos Dados Pessoais Sensíveis."
+            ]
+          }
+        }
+      },
+
+      "5": {
+        "title": "5. Compartilhamento de Dados",
+        "items": [
+          "Com parceiros e prestadores de serviço.",
+          "Para suporte, hospedagem, marketing e tecnologia.",
+          "Em casos de reorganização societária."
+        ]
+      },
+
+      "6": {
+        "title": "6. Transferências internacionais",
+        "items": [
+          "Os dados podem ser acessados por parceiros fora do Brasil."
+        ]
+      },
+
+      "7": {
+        "title": "7. Coleta automática de Dados",
+        "sections": {
+          "7.1": {
+            "title": "Cookies",
+            "items": [
+              "Utilizados para funcionamento e personalização da experiência."
+            ]
+          },
+          "7.2": {
+            "title": "Tecnologias",
+            "items": [
+              "Cookies, pixel tags e tecnologias similares."
+            ]
+          },
+          "7.3": {
+            "title": "Gerenciamento",
+            "items": [
+              "O usuário pode gerenciar cookies no navegador."
+            ]
+          }
+        }
+      }
+    },
+
+    "rights": {
+      "title": "8. Direitos do Usuário",
+      "01": "Solicitar acesso, correção, eliminação ou portabilidade de dados.",
+      "02": "Alguns pedidos podem ser limitados por obrigações legais."
+    },
+
+    "security": {
+      "title": "9. Segurança dos Dados",
+      "01": "Adotamos medidas de segurança.",
+      "02": "Nenhum sistema é totalmente seguro."
+    },
+
+    "contact": {
+      "title": "12. Contato",
+      "01": "E-mail: help@zaylo.com.br"
+    }
+  },
+
+  
+  "help": {
+    "title": "Trocas e Devoluções",
+
+    "intro": {
+      "text": "As ocorrências que envolvam TROCA ou DEVOLUÇÃO de produto DEVEM ser comunicadas à nossa central de relacionamento através do número",
+      "phone": "(21) 3559-2430",
+      "schedule": "de segunda a sexta entre 10h e 18h",
+      "or": "ou através do e-mail",
+      "email": "contato@zaylo.com.br"
+    },
+
+    "section1": {
+      "title": "Devolução por desistência ou arrependimento",
+      "01": "Se por desistência ou arrependimento você optar por devolver a mercadoria, as seguintes condições deverão ser observadas.",
+      "02": "O prazo para desistir ou se arrepender da compra do produto é de até 7 (sete) dias corridos, a contar da data do recebimento, conforme artigo 49 do Código de Defesa do Consumidor. Passado os 7 primeiros dias, o cliente é quem arca com os custos da logística.",
+      "03": "O produto deverá ser encaminhado devidamente embalado, acompanhado da nota fiscal de compra, tags e acessórios que foram enviados.",
+      "04": "Constatada qualquer divergência no envio dos itens mencionados, a empresa fica isenta de aceitar a solicitação e devolverá o produto ao endereço de entrega sem a correspondente restituição dos valores pagos."
+    },
+
+    "section2": {
+      "title": "Troca do Produto com Defeito Técnico",
+      "01": "A partir do recebimento, o consumidor tem um prazo de 90 dias (artigo 26, II do Código de Defesa do Consumidor) para reclamar qualquer problema detectado neste período.",
+      "02": "O consumidor deverá encaminhar no mínimo quatro fotos de ângulos diferentes do produto com defeito para análise.",
+      "03": "O produto deverá ser encaminhado devidamente embalado, acompanhado da nota fiscal de compra, tags e acessórios enviados.",
+      "04": "Todos os produtos são analisados e caso não seja constatado qualquer defeito, a troca não será realizada.",
+      "05": "Se o defeito for constatado, será gerada uma autorização de postagem para devolução sem custo ao cliente. Após a postagem e envio do código de rastreamento, será dado prosseguimento ao envio do novo produto.",
+      "06": "Caso o produto para troca não esteja disponível, a Zaylo poderá negociar um produto similar, gerar um cupom de desconto para compra futura ou realizar o ressarcimento do valor pago."
+    },
+
+    "section3": {
+      "title": "Falta de Produto ou Produto Errado",
+      "01": "O cliente tem até 30 dias, contados da data do recebimento, para reclamar falta de mercadoria ou envio de produto em desacordo com o pedido. Após os 7 primeiros dias corridos, o cliente arca com os custos da logística.",
+      "02": "Confirmada a falta do produto, o cliente receberá o item correto no endereço de origem, sem custos adicionais.",
+      "03": "Em caso de mercadoria errada, dependendo da localidade, não será realizado o recolhimento. O cliente será orientado a realizar a doação do produto para uma ONG de causa animal, e o item correto será enviado."
+    },
+
+    "section4": {
+      "title": "Troca do produto: Tamanho Errado",
+      "01": "O cliente tem até 30 dias, contados da data do recebimento, para solicitar a troca por tamanho incorreto. Após os 7 primeiros dias corridos, os custos de logística são de responsabilidade do cliente.",
+      "02": "Confirmada a troca, será gerada uma autorização de postagem para devolução do produto.",
+      "03": "Após a postagem e envio do código de rastreamento, será realizado o envio do novo produto. O item deve ser devolvido devidamente embalado, com nota fiscal, tags e acessórios."
+    },
+
+    "section5": {
+      "title": "Reembolso",
+      "01": "A Zaylo restitui os valores pagos utilizando a mesma forma de pagamento escolhida no processo de compra.",
+      "02": "Cartão de crédito: a administradora será notificada e o estorno ocorrerá em até 30 dias, sendo lançado como crédito na fatura.",
+      "03": "Boleto bancário ou depósito: a restituição será efetuada por meio de depósito em conta corrente indicada pelo consumidor em até 10 dias úteis, sendo necessário que o CPF ou CNPJ do titular seja o mesmo do pedido.",
+      "04": "Em caso de devolução, a restituição será processada somente após o recebimento e análise das condições do produto.",
+      "05": "O reembolso será realizado no valor total do produto devolvido ou cancelado, incluindo o valor do frete.",
+      "06": "Não serão realizadas devoluções parciais em dinheiro."
+    },
+
+    "section6": {
+      "title": "Formas de Pagamento",
+      "01": "A Zaylo aceita todas as formas de pagamento disponíveis pelo Mercado Pago:",
+      "02": "Cartão de Crédito",
+      "03": "Cartão de Débito",
+      "04": "Boleto Bancário",
+      "05": "Pix",
+      "06": "Wallet Mercado Pago"
+    }
+  },
+
+  "blog":{
+"por":"Post por",
+"produtos":"Produtos Zaylo",
+"materia":"Link da matéria",
+"socials":"Redes Sociais",
+"title":"Blog",
+"cart":"Carrinho"
+}
+
+
+
+}
+
