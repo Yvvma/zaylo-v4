@@ -1,31 +1,14 @@
 import { motion, useScroll, useTransform } from "framer-motion";
-import texts from "../../texts.json";
-import { useEffect, useState, useRef } from "react";
+import { useRef } from "react";
 
 const VestContainer = () => {
   const containerRef = useRef<HTMLDivElement>(null);
-  const [isVisible, setIsVisible] = useState(false);
-  // Scroll-linked motion
   const { scrollYProgress } = useScroll({
     target: containerRef,
-    offset: ["start end", "end start"], 
+    offset: ["start end", "end start"],
   });
-
-  // Transformar o scroll em deslocamento vertical (de -50px para 0)
   const yOffset = useTransform(scrollYProgress, [0, 1], [-128, 0]);
   const opacity = useTransform(scrollYProgress, [0, 0.3], [0, 1]);
-
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) setIsVisible(true);
-      },
-      { threshold: 0.1 }
-    );
-
-    if (containerRef.current) observer.observe(containerRef.current);
-    return () => observer.disconnect();
-  }, []);
 
   return (
     <section
@@ -33,10 +16,7 @@ const VestContainer = () => {
       className="w-full flex flex-col justify-center items-center"
       ref={containerRef}
     >
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: isVisible ? 1 : 0 }}
-        transition={{ duration: 0.4, ease: "easeOut" }}
+      <div
         className="relative w-full flex justify-center items-center cursor-pointer">
         <div className="relative w-full aspect-[3/4] overflow-hidden sm:max-h-212">
           {/* Imagem de fundo */}
@@ -95,7 +75,7 @@ const VestContainer = () => {
             </motion.div>
           </div>
         </div>
-      </motion.div>
+      </div>
     </section>
   );
 };
