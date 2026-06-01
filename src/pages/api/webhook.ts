@@ -1,6 +1,6 @@
 import type { APIRoute } from "astro";
 import { sendConfirmationEmail, sendAlertEmail } from "./resend";
-import { getOrder, saveOrder } from "./order-store";
+import { getOrderNormalized, saveOrderNormalized, setupOrdersTable } from "./turso";
 import { addToCart, checkout, generate } from "./melhor-envio-auth";
 import { createVenda } from "./bling-auth";
 import { buscarBlingId } from "../../data/bling-produtos";
@@ -35,7 +35,7 @@ export const POST: APIRoute = async ({ request }) => {
     const event = await request.json();
     console.log("[Webhook] Event:", event.event, "| Payment:", event.payment?.id);
 
-    if (event.event !== "PAYMENT_RECEIVED") {
+    if (event.event !== "PAYMENT_CONFIRMED") {
       return new Response(JSON.stringify({ ok: true, skipped: true }), { status: 200 });
     }
 
@@ -46,22 +46,21 @@ export const POST: APIRoute = async ({ request }) => {
 
     await setupMETokensTable().catch(() => console.warn("[ME] Falha ao criar tabela"));
     await setupBlingTokensTable().catch(() => console.warn("[Bling] Falha ao criar tabela"));
+    await setupOrdersTable().catch(() => console.warn("[Orders] Falha ao criar tabela"));
 
     const orderId = payment.externalReference ?? `ZY${payment.id}`;
     console.log("[Webhook] orderId:", orderId, "| payment.id:", payment.id);
 
-    // Load current state from Turso
-    const orderMeta = (await getOrder(orderId)) ?? {};
+    const orderMeta = await getOrderNormalized(orderId);
+    if (!orderMeta) {
+      console.warn("[Webhook] Pedido não encontrado no Turso:", orderId);
+      return new Response(JSON.stringify({ ok: true, skipped: true }), { status: 200 });
+    }
 
-    // Extract processing flags — these are the constants that gate each operation
-    const {
-      meProcessed = false,
-      emailSent = false,
-      blingProcessed = false,
-      meOrderId: existingMeOrderId = null,
-      blingVendaId: existingBlingVendaId = null,
-      processedItems = [],
-    } = orderMeta;
+    const emailSent = !!orderMeta.emailSent;
+    const blingProcessed = !!orderMeta.blingProcessed;
+    const meProcessed = !!orderMeta.meProcessed;
+    const existingMeOrderId = null;
 
     const {
       nome = "Cliente",
@@ -104,8 +103,8 @@ export const POST: APIRoute = async ({ request }) => {
         });
         console.log("[Resend] Confirmation email sent to:", email);
 
-        const latest = (await getOrder(orderId)) ?? orderMeta;
-        await saveOrder(orderId, { ...latest, emailSent: true });
+        const latest = await getOrderNormalized(orderId) ?? orderMeta;
+        await saveOrderNormalized(orderId, { ...latest, emailSent: 1 });
       } catch (e) {
         console.error("[Resend] Erro ao enviar email de confirmação:", e);
         try {
@@ -153,21 +152,10 @@ export const POST: APIRoute = async ({ request }) => {
           const blingContatoId = result?.contatoId ?? null;
           console.log("[Bling] Venda criada:", blingVendaId ?? "ok", "| Contato:", blingContatoId);
 
-          const latest = (await getOrder(orderId)) ?? orderMeta;
-          const newProcessedItems = itens.map((i: any) => ({
-            slug: i.slug,
-            cor: i.corVarianteSelecionada,
-            tamanho: i.tamanhoSelecionado,
-            blingId: buscarBlingId(i.slug, i.corVarianteSelecionada, i.tamanhoSelecionado) ?? i.blingId ?? i.produtoId ?? i.id,
-            quantidade: i.quantidade,
-          }));
-
-          await saveOrder(orderId, {
+          const latest = await getOrderNormalized(orderId) ?? orderMeta;
+          await saveOrderNormalized(orderId, {
             ...latest,
-            blingContatoId,
-            blingVendaId,
-            blingProcessed: true,
-            processedItems: [...(latest.processedItems ?? []), ...newProcessedItems],
+            blingProcessed: 1,
           });
 
           isBlingProcessed = true;
@@ -236,8 +224,8 @@ export const POST: APIRoute = async ({ request }) => {
           console.log("[ME] Cart:", meOrderId);
 
           if (meOrderId) {
-            const latest = (await getOrder(orderId)) ?? orderMeta;
-            await saveOrder(orderId, { ...latest, meOrderId });
+            const latest = await getOrderNormalized(orderId) ?? orderMeta;
+            await saveOrderNormalized(orderId, { ...latest, meOrderId });
           }
         }
 
@@ -248,8 +236,8 @@ export const POST: APIRoute = async ({ request }) => {
           await generate([meOrderId]);
           console.log("[ME] Generated:", meOrderId);
 
-          const latest = (await getOrder(orderId)) ?? orderMeta;
-          await saveOrder(orderId, { ...latest, meOrderId, meProcessed: true });
+          const latest = await getOrderNormalized(orderId) ?? orderMeta;
+          await saveOrderNormalized(orderId, { ...latest, meOrderId, meProcessed: 1 });
           console.log("[Webhook] ME processado e salvo no Turso");
         }
       } catch (e) {

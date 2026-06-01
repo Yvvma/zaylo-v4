@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 
 type PaymentMethod = "CREDIT_CARD" | "BOLETO" | "PIX";
 
@@ -208,6 +208,30 @@ async function pollPaymentConfirmed(paymentId: string, timeoutMs = 60000): Promi
 
 // No shipment/email logic here — handled server-side by /api/webhook after Asaas confirms payment
 
+// ─── Toast ────────────────────────────────────────────────────────────────────
+
+function Toast({ message, onDone }: { message: string; onDone: () => void }) {
+  const [visible, setVisible] = useState(true);
+
+  useEffect(() => {
+    const hide = setTimeout(() => setVisible(false), 10000);
+    const done = setTimeout(onDone, 11200);
+    return () => { clearTimeout(hide); clearTimeout(done); };
+  }, [onDone]);
+
+  return (
+    <div
+      style={{ transition: "opacity 1.2s ease" }}
+      className={`fixed top-4 right-4 z-50 flex items-start gap-3 bg-white border border-gray-200 rounded-2xl shadow-lg px-4 py-3 max-w-xs ${
+        visible ? "opacity-100" : "opacity-0"
+      }`}
+    >
+      <img src="/logos/zaylo-logo.png" alt="Zaylo" className="h-5 mt-0.5 invert shrink-0" />
+      <p className="text-sm text-gray-700 leading-snug">{message}</p>
+    </div>
+  );
+}
+
 // ─── Sub-components ───────────────────────────────────────────────────────────
 
 function InputField({
@@ -358,12 +382,19 @@ const CheckoutPage = () => {
     return total * (MONTHLY_INTEREST * Math.pow(1 + MONTHLY_INTEREST, count)) / (Math.pow(1 + MONTHLY_INTEREST, count) - 1);
   }
 
+  // Toast
+  const [toastMsg, setToastMsg] = useState<string | null>(null);
+  const showToast = useCallback((msg: string) => setToastMsg(msg), []);
+
   // Coupon
   const [couponOpen, setCouponOpen] = useState(false);
   const [couponCode, setCouponCode] = useState("");
+  const [appliedCoupon, setAppliedCoupon] = useState<{ code: string; discountPercent: number } | null>(null);
 
   const shippingPrice = selectedShipping?.price || 0;
-  const total = totalPrice + shippingPrice;
+  const subtotalWithShipping = totalPrice + shippingPrice;
+  const discountAmount = appliedCoupon ? subtotalWithShipping * (appliedCoupon.discountPercent / 100) : 0;
+  const total = subtotalWithShipping - discountAmount;
 
   const handleCEPBlur = async () => {
     const clean = cep.replace(/\D/g, "");
@@ -429,6 +460,43 @@ const CheckoutPage = () => {
 
     setIsSubmitting(true);
 
+    // Pedido de influencer (100% de desconto) — pula Asaas
+    if (appliedCoupon?.discountPercent === 100) {
+      try {
+        const orderId = `ZY${Date.now()}`;
+        const orderData = {
+          nome: name, email, cpfCnpj: cpf.replace(/\D/g, ""),
+          telefone: phone.replace(/\D/g, ""),
+          itens: cartItems.map(i => ({
+            id: i.id, slug: (i as any).slug, titulo: i.title,
+            quantidade: i.quantity, preco: i.price, peso: i.weight,
+            tamanhoSelecionado: i.selectedSize, corVarianteSelecionada: i.selectedVariantColor,
+          })),
+          total: 0,
+          endereco: { cep, logradouro: address, numero: addressNumber, complemento: complement, bairro: district, cidade: city, uf: state },
+          freteSelecionado: selectedShipping,
+          condicaoPagamento: "1x",
+          cupom: appliedCoupon.code,
+          descontoPercent: 100,
+          descontoValor: totalPrice + shippingPrice,
+        };
+        const res = await fetch("/api/influencer-order", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ orderId, orderData }),
+        });
+        if (!res.ok) throw new Error("Falha ao processar pedido");
+        saveLastOrder();
+        localStorage.removeItem("cart");
+        window.location.href = "/success";
+      } catch (err: any) {
+        setError(err.message ?? "Ocorreu um erro. Tente novamente.");
+      } finally {
+        setIsSubmitting(false);
+      }
+      return;
+    }
+
     try {
       const customer = await createAsaasCustomer({
         name,
@@ -477,6 +545,9 @@ const CheckoutPage = () => {
             observacao: paymentMethod === "CREDIT_CARD"
               ? `Cartão de Crédito${installmentCount > 1 ? ` - ${installmentCount}x` : ""}`
               : "PIX",
+            cupom: appliedCoupon?.code ?? null,
+            descontoPercent: appliedCoupon?.discountPercent ?? null,
+            descontoValor: appliedCoupon ? discountAmount : null,
           },
         }),
       });
@@ -681,6 +752,7 @@ const CheckoutPage = () => {
   // ── Main checkout layout ──
   return (
     <div className="min-h-screen bg-gray-50 ">
+      {toastMsg && <Toast message={toastMsg} onDone={() => setToastMsg(null)} />}
       {/* Simple Header */}
       <header className="bg-white border-b border-black px-4 py-4">
         <div className="max-w-5xl mx-auto">
@@ -988,28 +1060,58 @@ const CheckoutPage = () => {
 
               {/* Coupon */}
               <div className="pt-2 border-t border-gray-100 mb-4">
-                <button
-                  type="button"
-                  onClick={() => setCouponOpen(!couponOpen)}
-                  className="text-xs text-gray-500 hover:text-gray-700 flex items-center gap-1"
-                >
-                  <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
-                  </svg>
-                  Adicionar cupom de desconto
-                </button>
-                {couponOpen && (
-                  <div className="mt-2 flex gap-2">
-                    <input
-                      type="text"
-                      value={couponCode}
-                      onChange={(e) => setCouponCode(e.target.value)}
-                      placeholder="Código do cupom"
-                      className="flex-1 border border-gray-200 rounded-lg px-3 py-2 text-sm outline-none focus:border-gray-400"
-                    />
-                    <button className="px-4 py-2 text-sm font-medium text-gray-900 border border-gray-200 rounded-lg hover:bg-gray-50">
-                      Aplicar
+                {appliedCoupon ? (
+                  <div className="flex items-center justify-between text-xs">
+                    <span className="text-green-600 font-medium">✓ {appliedCoupon.code} ({appliedCoupon.discountPercent}% off)</span>
+                    <button type="button" onClick={() => setAppliedCoupon(null)} className="text-gray-400 hover:text-gray-600">Remover</button>
+                  </div>
+                ) : (
+                  <div>
+                    <button
+                      type="button"
+                      onClick={() => setCouponOpen(!couponOpen)}
+                      className="text-xs text-gray-500 hover:text-gray-700 flex items-center gap-1"
+                    >
+                      <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+                      </svg>
+                      Adicionar cupom de desconto
                     </button>
+                    {couponOpen && (
+                      <div className="mt-2 flex gap-2">
+                        <input
+                          type="text"
+                          value={couponCode}
+                          onChange={(e) => setCouponCode(e.target.value)}
+                          placeholder="Código do cupom"
+                          className="flex-1 border border-gray-200 rounded-lg px-3 py-2 text-sm outline-none focus:border-gray-400"
+                        />
+                        <button
+                          type="button"
+                          onClick={async () => {
+                            if (!cpf || cpf.replace(/\D/g, "").length < 11) {
+                              showToast("Preencha seus dados antes de aplicar o cupom.");
+                              return;
+                            }
+                            const res = await fetch("/api/coupon", {
+                              method: "POST",
+                              headers: { "Content-Type": "application/json" },
+                              body: JSON.stringify({ code: couponCode, cpfCnpj: cpf.replace(/\D/g, "") }),
+                            });
+                            const data = await res.json();
+                            if (data.valid) {
+                              setAppliedCoupon({ code: data.code, discountPercent: data.discountPercent });
+                              setCouponOpen(false);
+                            } else {
+                              showToast(data.error ?? "Cupom inválido");
+                            }
+                          }}
+                          className="px-4 py-2 text-sm font-medium text-gray-900 border border-gray-200 rounded-lg hover:bg-gray-50"
+                        >
+                          Aplicar
+                        </button>
+                      </div>
+                    )}
                   </div>
                 )}
               </div>
@@ -1028,6 +1130,12 @@ const CheckoutPage = () => {
                     <span className="text-gray-400">Calcular no endereço</span>
                   )}
                 </div>
+                {appliedCoupon && (
+                  <div className="flex justify-between text-sm text-green-600">
+                    <span>Desconto ({appliedCoupon.discountPercent}%)</span>
+                    <span>-{formatCurrency(discountAmount)}</span>
+                  </div>
+                )}
                 <div className="flex justify-between text-base font-semibold text-gray-900 pt-2 border-t border-gray-100">
                   <span>Total</span>
                   <span className="text-right">

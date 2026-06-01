@@ -107,6 +107,37 @@ export async function sendConfirmationEmail(params: {
   ]);
 }
 
+export async function sendInfluencerAlertEmail(params: {
+  customerName: string;
+  customerEmail: string;
+  orderId: string;
+  couponCode: string;
+  items: Array<{ name: string; quantity: number; price: number; size?: string }>;
+  address: string;
+}) {
+  const itemsHtml = params.items
+    .map(
+      (i) =>
+        `<tr><td>${i.name}${i.size ? `<br><span style="font-size:12px;color:#888">Tam: ${i.size}</span>` : ""}</td><td style="text-align:center">${i.quantity}</td><td class="price">R$ ${(i.price * i.quantity).toFixed(2)}</td></tr>`
+    )
+    .join("");
+
+  const html = wrapHtml(`
+    <h2 style="color:#b45309">🌟 Pedido de Influencer</h2>
+    <p><strong>Cupom utilizado:</strong> <span style="background:#fef3c7;padding:2px 8px;border-radius:4px;font-weight:bold">${params.couponCode}</span></p>
+    <p><strong>Pedido:</strong> ${params.orderId}<br>
+    <strong>Influencer:</strong> ${params.customerName} (${params.customerEmail})</p>
+    <p><strong>Endereço:</strong> ${params.address}</p>
+    <table class="items">
+      <thead><tr><th>Produto</th><th style="text-align:center">Qtd</th><th style="text-align:right">Preço</th></tr></thead>
+      <tbody>${itemsHtml}</tbody>
+    </table>
+    <p style="font-size:13px;color:#888;font-style:italic">Pedido gratuito — processado automaticamente no Bling e Melhor Envio.</p>
+  `);
+
+  await sendEmail(COMPANY_EMAIL, `🌟 Influencer — Pedido ${params.orderId} | ZAYLO`, html, "Zaylo");
+}
+
 export async function sendAlertEmail(orderId: string, customerEmail: string, customerName: string) {
   const html = wrapHtml(`
     <h2>Falha no envio de e-mail</h2>
