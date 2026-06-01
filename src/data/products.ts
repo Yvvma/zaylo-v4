@@ -75,7 +75,7 @@ export const products: Product[] = [
     id: 2,
     slug: "ozy-vest",
     title: "Ozy.Vest",
-    price: 279.99,
+    price: 279.00,
     category: "Peitoral",
     mainImg: "/products/ozy-vest/black-lemon/01.webp",
     variants: [
@@ -171,7 +171,7 @@ Sem dúvida, um dos peitorais mais seguros e sofisticados do mercado.`,
     id: 3,
     slug: "leash",
     title: "Leash",
-    price: 169.99,
+    price: 169.00,
     category: "Coleira",
     mainImg: "/products/leash/black-lemon/01.webp",
     description: `Força estrutural, precisão no controle e estética minimalista.
