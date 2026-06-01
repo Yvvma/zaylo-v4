@@ -28,15 +28,7 @@ const mediaItems: MediaItem[] = [
     subtitle: "Freedoom Leash",
     duration: 5000,
     link: "/freedom-leash",
-  },
-  {
-    type: "image",
-    src: "/banners/steel-bowl.webp",
-    title: "Steel Bowl",
-    subtitle: "Steel Bowl",
-    duration: 5000,
-    link: "/steel-bowl",
-  },
+  }
 ];
 
 const preloadedImages = new Map<string, boolean>();

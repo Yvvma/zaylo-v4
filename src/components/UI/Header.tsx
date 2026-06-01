@@ -32,13 +32,7 @@ const HeaderComponent = () => {
   useEffect(() => { setHydrated(true); }, []);
 
   // Try to use cart context, with fallback for pages without it
-  let cartItems = [];
-  try {
-    const cart = useCart();
-    cartItems = cart.cartItems;
-  } catch (e) {
-    // Cart context not available on this page
-  }
+  const { cartItems } = useCart();
 
   const sidebarMenuVariants = {
     hidden: {},

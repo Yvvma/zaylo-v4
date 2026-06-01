@@ -19,7 +19,7 @@ import AppWrapper from '../components/UI/AppWrapper';
 	</head>
 	<body >
 
-		  <AppWrapper client:load>
+		  <AppWrapper client:only="react">
         <slot />
 		</AppWrapper>
     <FooterComponent client:only="react" />
