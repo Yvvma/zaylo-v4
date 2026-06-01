@@ -1,13 +1,33 @@
 ---
 import Layout from '../layouts/Layout.astro';
-
-import ContentWrapper from '../components/Home/ContentWrapper';
+import BannerContainer from '../components/Home/BannerContainer';
+import NewArrivalsContainer from '../components/Home/NewArrivals';
+import ProdutosContainer from '../components/Revendedor/ProdutosContainer';
+import VestContainer from '../components/Home/VestContainer';
+import FreedomLeashContainer from '../components/Home/FreedomLeashContainer';
+import RevendedorContainer from '../components/Revendedor/BannerContainer';
+import ProductContainer from '../components/Home/Product';
 ---
 
 <Layout title="Zaylo">
   <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-element-bundle.min.js"></script>
 
-  <div class="w-full h-full custom-container bg-black flex justify-center items-center bg-no-repeat bg-cover mt-8">
-    <ContentWrapper client:only="react"/>
-  </div>
+  <section class="relative flex flex-col w-full gap-6 justify-center items-center bg-center bg-[#131819] border-b border-white z-30">
+
+    <div class="flex w-full h-full sm:flex-row flex-col gap-6 sm:gap-0">
+      <BannerContainer client:load />
+      <NewArrivalsContainer client:load />
+    </div>
+
+    <ProdutosContainer client:load />
+
+    <div class="flex w-full h-full sm:flex-row flex-col gap-6 sm:gap-0">
+      <VestContainer client:load />
+      <FreedomLeashContainer client:load />
+    </div>
+
+    <RevendedorContainer client:load />
+    <ProductContainer client:load />
+
+  </section>
 </Layout>
