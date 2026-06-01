@@ -34,9 +34,9 @@ A guia dupla para cachorro não é só um acessório, é uma revolução para qu
 > Com a Double Leash da ZAYLO, passear com dois cachorros vira um momento de conexão, não de perrengue.
 
 ## Como Passear com Dois Cachorros ao Mesmo Tempo, Usando a Guia Dupla
-<div class='flex justify-center items-center py-2'>
+
 ![Guia Dupla](/blog/coleira/dupla-01.jpg)
-</div>
+
 Passo a Passo para o sucesso dos passeios em dose dupla:
 
 <ol>
