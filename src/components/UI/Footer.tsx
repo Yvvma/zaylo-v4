@@ -101,7 +101,7 @@ const FooterComponent = () => {
                     href="https://www.instagram.com/zaylobr"
                     aria-label="Instagram"
                   >
-                    <Instagram className="w-8 h-8 text-white" /> {/* Increased icon size */}
+                    <Instagram className="w-6 h-6 text-white" /> {/* Increased icon size */}
                   </motion.a>
                   <motion.a
                     whileHover={{ scale: 1.1 }}
@@ -109,7 +109,7 @@ const FooterComponent = () => {
                     href="https://www.youtube.com/@zaylobr"
                     aria-label="Instagram"
                   >
-                    <LucideYoutube className="w-9 h-9 scale-x-110 scale-y-120 text-white" /> {/* Increased icon size */}
+                    <LucideYoutube className="w-7 h-7 scale-x-110 scale-y-120 text-white" /> {/* Increased icon size */}
                   </motion.a>
 
                    <motion.a
@@ -118,7 +118,7 @@ const FooterComponent = () => {
                     href="https://wa.me/552135592431"
                     aria-label="whatsapp"
                   >
-                    <img src='/icons/whatsapp.png' className='max-w-9 invert'/>
+                    <img src='/icons/whatsapp.png' className='max-w-7 invert'/>
                   </motion.a>
                 </div>
               
@@ -131,7 +131,7 @@ const FooterComponent = () => {
             className="flex justify-between items-center text-start sm:items-start w-full md:cursor-default cursor-pointer px-4 "
             onClick={() => setIsHelpOpen(!isHelpOpen)}
           >
-            <h3 className="fill-over-stroke font-heading font-bold text-lg uppercase sm:text-2xl stroke stroke-black-2 sm:-translate-x-4">Ajuda</h3>
+            <h3 className="fill-over-stroke font-heading font-bold text-md uppercase sm:text-2xl stroke stroke-black-2 sm:-translate-x-4">Ajuda</h3>
             <span className="md:hidden text-white">
               {isHelpOpen ? <ChevronUp className="w-5 h-5" /> : <ChevronDown className="w-5 h-5" />}
             </span>
@@ -164,7 +164,7 @@ const FooterComponent = () => {
             className="flex justify-between items-center w-full md:cursor-default cursor-pointer px-4 md:p-0  "
             onClick={() => setIsAboutOpen(!isAboutOpen)}
           >
-            <h3 className="fill-over-stroke font-heading font-bold text-lg uppercase sm:text-2xl stroke stroke-black-2 sm:-translate-x-4">Sobre</h3>
+            <h3 className="fill-over-stroke font-heading font-bold text-md uppercase sm:text-2xl stroke stroke-black-2 sm:-translate-x-4">Sobre</h3>
             <span className="md:hidden text-white">
               {isAboutOpen ? <ChevronUp className="w-5 h-5" /> : <ChevronDown className="w-5 h-5" />}
             </span>
