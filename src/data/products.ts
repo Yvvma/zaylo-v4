@@ -70,50 +70,7 @@ export type Product = {
 };
 
 export const products: Product[] = [
-  {
-    id: 1,
-    slug: "steel-bowl",
-    title: "Steel Bowl",
-    price: 279.00,
-    category: "Bowl",
-    mainImg: "/products/bowl/black/01.webp",
-    description: "Tigela de aço inoxidável resistente e durável, perfeita para alimentação diária.",
-    technicalSheet: `Material: Aço Inoxidável 304
-Capacidade: 500ml / 1000ml / 1500ml (conforme tamanho)
-Dimensões (M): Ø 15cm x 5cm
-Peso: 250g (S) / 350g (M) / 450g (L)
-Acabamento: Polido espelhado
-Resistência: Antioxidante e anticorrosivo
-Uso: Água e alimento
-Limpeza: Lava-louças seguro`,
-    variants: [
-      {
-        color: "Black",
-        images: [
-          "/products/bowl/black/optimized/01.webp",
-          "/products/bowl/black/optimized/02.webp",
-          "/products/bowl/black/optimized/03.webp",
-          "/products/bowl/black/optimized/04.webp",
-          "/products/bowl/black/optimized/05.webp",
-
-        ],
-        sku: "SB-BLK",
-        sizes: ["Único"]
-      },
-      {
-        color: "Rose",
-        images: [
-          "/products/bowl/rose/optimized/01.webp",
-          "/products/bowl/rose/optimized/02.webp",
-          "/products/bowl/rose/optimized/03.webp",
-          "/products/bowl/rose/optimized/04.webp",
-          "/products/bowl/rose/optimized/05.webp"
-        ],
-        sku: "SB-ROSE",
-        sizes: ["Único"]
-      }
-    ]
-  },
+  
   {
     id: 2,
     slug: "ozy-vest",
@@ -214,7 +171,7 @@ Sem dúvida, um dos peitorais mais seguros e sofisticados do mercado.`,
     id: 3,
     slug: "leash",
     title: "Leash",
-    price: 179.99,
+    price: 169.99,
     category: "Coleira",
     mainImg: "/products/leash/black-lemon/01.webp",
     description: `Força estrutural, precisão no controle e estética minimalista.
@@ -293,7 +250,7 @@ Design único e exclusivo ZAYLO®.`,
     id: 4,
     slug: "double-leash",
     title: "Double Leash",
-    price: 179.99,
+    price: 219.00,
     category: "Coleira",
     mainImg: "/products/double-leash/black-lemon/01.webp",
     description: `Controle absoluto, mesmo com dois.
@@ -348,7 +305,7 @@ Mais controle, mais equilíbrio, mais fluidez no passeio.`,
     id: 5,
     slug: "bungee-harness",
     title: "Bungee Harness",
-    price: 179.99,
+    price: 189.00,
     category: "Peitoral",
     mainImg: "/products/bungee-harness/black-yellow/01.webp",
     description: `Menos impacto. Mais fluidez.
@@ -398,7 +355,7 @@ O resultado é um passeio mais confortável, controlado e sem trancos.`,
     id: 6,
     slug: "freedom-leash",
     title: "Freedom Leash",
-    price: 179.99,
+    price: 259.99,
     category: "Coleira",
     mainImg: "/products/freedom-leash/black-lemon/01.webp",
     description: `Liberdade em movimento.
@@ -482,7 +439,7 @@ Uma guia, múltiplas possibilidades.`,
     id: 7,
     slug: "bungee-harness-no-pull",
     title: "Bungee Harness No Pull",
-    price: 179.99,
+    price: 189.00,
     category: "Peitoral",
     mainImg: "/products/bungee-harness-no-pull/black-lemon/01.webp",
     description: `Controle inteligente com dupla função.
