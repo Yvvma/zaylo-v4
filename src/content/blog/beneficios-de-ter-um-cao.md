@@ -15,7 +15,7 @@ insta: "@zaylooficial"
 Ser um tutor de cachorro é mais do que ter um pet, é viver uma conexão cachorro e dono que muda quem somos. Os cachorros nos trazem alegria, lealdade e uma lista impressionante de benefícios, desde saúde mental até um dia a dia mais ativo. Neste post, vamos explorar como essa relação especial transforma a vida dos tutores e por que ela é tão única.
 
 <div class='flex justify-center items-center py-2'>
-<iframe width="560" height="315" src="https://www.youtube.com/embed/sMiqCPlbplo" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+<iframe width="328" height="240" src="https://www.youtube.com/embed/sMiqCPlbplo" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 </div>
 
 ## Os Benefícios de Ter um Cachorro para o Tutor

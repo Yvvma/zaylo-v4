@@ -17,7 +17,7 @@ Se você já tentou sair com dois cães usando guias separadas, sabe o caos que 
 Além de melhorar a experiência para o tutor, esse tipo de guia traz alívio físico e emocional para os pets, especialmente os que puxam muito ou têm tendência a lesões no pescoço.
 
 <div class='flex justify-center items-center py-2'>
-<iframe width="560" height="315" src="https://www.youtube.com/embed/VsR7lGe2DYQ" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+  <iframe width="328" height="240" src="https://www.youtube.com/embed/VsR7lGe2DYQ" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 </div>
 
 ## Por que Escolher uma Guia Dupla Cachorro?
