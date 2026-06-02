@@ -110,13 +110,14 @@ const MainVideoContainer = () => {
   return (
     <section
       id="content"
-      className="w-full flex flex-col justify-center items-center  "
+      className="w-full flex flex-col justify-center items-center relative "
     >
+     
       <motion.div
         initial={{ opacity: 0, y: 32 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.4, ease: "easeOut" }}
-        className="relative w-full flex justify-center items-center cursor-pointer"
+        className="relative w-full flex justify-center items-center cursor-pointer z-20"
         onClick={handleVideoClick}
       >
         
@@ -147,7 +148,7 @@ const MainVideoContainer = () => {
         <div className="absolute inset-0 bg-black/40 flex flex-col items-center justify-center gap-6 p-4">
        <div className="flex flex-col justify-between items-center w-full h-full py-4 max-w-6xl">
 
-    {/* CTAs */}
+ <div className="absolute bottom-0 left-0 right-0 h-80 bg-gradient-to-t from-black via-black/50 to-transparent z-10"></div>
     <div className="flex flex-col w-full  py-12">
       <motion.h2
         initial={{ opacity: 0 }}
@@ -167,19 +168,11 @@ const MainVideoContainer = () => {
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 0.8, delay: 0.2 }}
-        className="text-white text-xs md:text-xs font-body font-light tracking-base px-4 text-left"
+        className="text-white text-xs md:text-xs font-body z-20 font-light tracking-base px-4 text-left"
       >
         {"Há quatro anos, minha vida ganhou um novo sentido quando o Zico, meu cachorro, passou a fazer parte dela. Foi nesse momento que percebi o poder transformador que os cães têm na vida de um ser humano. A conexão entre nós e eles é única — e foi dessa inspiração que nasceu a Zaylo."}
       </motion.h2>  
-      <motion.a
-      href='#content'
-        initial={{ opacity: 0, y:80 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration:0.6, delay: 0.4, ease: "easeOut" }}
-        className="text-white border-white px-4 py-2 rounded-full font-body font-light uppercase tracking-tight text-sm  hover:-translate-y-1 transition duration-300 z-10 border"
-      >
-        {"Continue"}
-      </motion.a>
+    
     </div>
 
   </div>

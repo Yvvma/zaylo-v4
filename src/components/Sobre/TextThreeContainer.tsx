@@ -133,7 +133,7 @@ const TextThreeContainer = () => {
        <div className="flex flex-col justify-between items-center w-full h-full py-4">
 
 
-
+<div className="absolute bottom-0 left-0 right-0 h-80 bg-gradient-to-t from-black via-black/50 to-transparent z-10"></div>
     {/* Botão */}
     <div className="flex justify-end h-full items-end w-full gap-2">
     
@@ -141,7 +141,7 @@ const TextThreeContainer = () => {
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 0.8, delay: 0.2 }}
-        className="text-white z-20 text-xs md:text-xs font-body font-light tracking-base px-4 text-left"
+        className="text-white z-20 text-xs z-20 md:text-xs font-body font-light tracking-base px-4 text-left"
       >
         {"Foi assim que deixei minha carreira de ator em pausa e mergulhei de cabeça nesse projeto. Após 3 anos e 4 meses de dedicação intensa, noites em claro e muitas renúncias, a Zaylo nasceu. Logo nos primeiros dias, ficou claro que não éramos apenas mais uma marca: viemos para lançar um novo conceito e reafirmar o que nos move — o amor incondicional pelos cachorros."}
       </motion.h2>  

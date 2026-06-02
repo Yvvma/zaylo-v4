@@ -131,10 +131,10 @@ const TextFiveContainer = () => {
         <div className="absolute inset-0 bg-black/60 flex flex-col items-center justify-center gap-6 p-4">
        <div className="flex flex-col justify-between items-center w-full h-full py-4">
 
-
+<div className="absolute bottom-0 left-0 right-0 h-64 bg-gradient-to-t from-black via-black/50 to-transparent z-10"></div>
 
     {/* Botão */}
-    <div className="flex justify-center h-full items-center flex-col w-full gap-2">
+    <div className="flex justify-end z-20 py-8 h-full items-center flex-col w-full gap-2 ">
     
        <motion.p
         initial={{ opacity: 0 }}

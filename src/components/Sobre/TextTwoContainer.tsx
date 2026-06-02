@@ -132,7 +132,7 @@ const TextTwoContainer = () => {
         <div className="absolute inset-0  flex flex-col items-center justify-center gap-6 p-4">
        <div className="flex flex-col justify-between items-center w-full h-full py-4">
 
-
+<div className="absolute bottom-0 left-0 right-0 h-80 bg-gradient-to-t from-black via-black/50 to-transparent z-10"></div>
 
     {/* Botão */}
     <div className="flex justify-end h-full items-end w-full gap-2">
@@ -141,7 +141,7 @@ const TextTwoContainer = () => {
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 0.8, delay: 0.2 }}
-        className="text-white text-xs md:text-xs font-body font-light tracking-base px-4 text-left"
+        className="text-white text-xs md:text-xs font-body font-light z-20 tracking-base px-4 text-left"
       >
         {"Identifiquei no mercado pet uma grande oportunidade: oferecer exclusividade e sofisticação para tutores exigentes, que valorizam qualidade, design e acessórios diferenciados. Em meio a um setor em plena expansão, onde quase tudo parecia mais do mesmo, decidi criar algo realmente único."}
       </motion.h2>  
