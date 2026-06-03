@@ -12,9 +12,11 @@ export default function DecksShopWrapper({
   hideFilters = false,
 }: WrapperProps) {
   return (
-    <ShopPage
-      initialMainFilter={initialMainFilter}
-      hideFilters={hideFilters}
-    />
+    <CartProvider>
+      <ShopPage
+        initialMainFilter={initialMainFilter}
+        hideFilters={hideFilters}
+      />
+    </CartProvider>
   );
 }

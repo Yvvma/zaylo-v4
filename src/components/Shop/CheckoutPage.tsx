@@ -981,7 +981,7 @@ const CheckoutPage = () => {
                               <option key={n} value={n}>
                                 {n === 1
                                   ? `1x de ${formatCurrency(total)} (sem juros)`
-                                  : `${n}x de ${formatCurrency(calcInstallmentAmount(n))} (total ${formatCurrency(calcTotalWithInterest(n))})`
+                                  : `${n}x de ${formatCurrency(calcInstallmentAmount(n))} (${formatCurrency(calcTotalWithInterest(n))})`
                                 }
                               </option>
                             ))}
