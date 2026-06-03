@@ -375,11 +375,18 @@ const CheckoutPage = () => {
   const [expiry, setExpiry] = useState("");
   const [cvv, setCvv] = useState("");
   const MAX_INSTALLMENTS = 6;
-  const MONTHLY_INTEREST = 0.029;
+  const MONTHLY_INTEREST = 0.0349;
   const [installmentCount, setInstallmentCount] = useState(1);
-  function calcInstallmentValue(count: number): number {
-    if (count <= 1) return total;
-    return total * (MONTHLY_INTEREST * Math.pow(1 + MONTHLY_INTEREST, count)) / (Math.pow(1 + MONTHLY_INTEREST, count) - 1);
+
+  // Retorna o valor de CADA parcela com juros
+  function calcInstallmentAmount(n: number): number {
+    if (n <= 1) return total;
+    return total * (MONTHLY_INTEREST * Math.pow(1 + MONTHLY_INTEREST, n)) / (Math.pow(1 + MONTHLY_INTEREST, n) - 1);
+  }
+  // Total cobrado com juros
+  function calcTotalWithInterest(n: number): number {
+    if (n <= 1) return total;
+    return calcInstallmentAmount(n) * n;
   }
 
   // Toast
@@ -582,11 +589,12 @@ const CheckoutPage = () => {
         };
 
         if (installmentCount > 1) {
+          const totalWithInterest = calcTotalWithInterest(installmentCount);
           const installment = await createAsaasInstallment({
             installmentCount,
             customer: customer.id,
-            value: total / installmentCount,
-            totalValue: total,
+            value: calcInstallmentAmount(installmentCount),
+            totalValue: totalWithInterest,
             billingType: "CREDIT_CARD",
             dueDate: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000)
               .toISOString()
@@ -969,14 +977,14 @@ const CheckoutPage = () => {
                           onChange={(e) => setInstallmentCount(Number(e.target.value))}
                           className="w-full border border-gray-200 rounded-lg px-3 py-2.5 text-sm outline-none focus:border-gray-400 transition-colors"
                         >
-                          {Array.from({ length: MAX_INSTALLMENTS }, (_, i) => i + 1).map((n) => {
-                            const v = calcInstallmentValue(n);
-                            return (
+                          {Array.from({ length: MAX_INSTALLMENTS }, (_, i) => i + 1).map((n) => (
                               <option key={n} value={n}>
-                                {n}x de {formatCurrency(v / n)}{n > 1 ? ` (${formatCurrency(v)})` : ""}
+                                {n === 1
+                                  ? `1x de ${formatCurrency(total)} (sem juros)`
+                                  : `${n}x de ${formatCurrency(calcInstallmentAmount(n))} (total ${formatCurrency(calcTotalWithInterest(n))})`
+                                }
                               </option>
-                            );
-                          })}
+                            ))}
                         </select>
                       </div>
                     </div>
@@ -1011,7 +1019,7 @@ const CheckoutPage = () => {
               disabled={isSubmitting || !selectedShipping}
               className="w-full bg-gray-900 text-white font-medium text-sm rounded-xl py-3.5 hover:bg-gray-800 active:scale-[0.99] transition-all disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              {isSubmitting ? "Aguardando confirmação..." : `Finalizar pedido · ${paymentMethod === "CREDIT_CARD" && installmentCount > 1 ? `${installmentCount}x de ${formatCurrency(calcInstallmentValue(installmentCount) / installmentCount)}` : formatCurrency(total)}`}
+              {isSubmitting ? "Aguardando confirmação..." : `Finalizar pedido · ${paymentMethod === "CREDIT_CARD" && installmentCount > 1 ? `${installmentCount}x de ${formatCurrency(calcInstallmentAmount(installmentCount))}` : formatCurrency(total)}`}
             </button>
 
             <p className="text-center text-xs text-gray-400">
@@ -1140,7 +1148,7 @@ const CheckoutPage = () => {
                   <span>Total</span>
                   <span className="text-right">
                     {paymentMethod === "CREDIT_CARD" && installmentCount > 1 ? (
-                      <>{formatCurrency(calcInstallmentValue(installmentCount))}<br /><span className="text-xs font-normal text-gray-500">{installmentCount}x de {formatCurrency(calcInstallmentValue(installmentCount) / installmentCount)}</span></>
+                      <>{formatCurrency(calcTotalWithInterest(installmentCount))}<br /><span className="text-xs font-normal text-gray-500">{installmentCount}x de {formatCurrency(calcInstallmentAmount(installmentCount))}</span></>
                     ) : (
                       formatCurrency(total)
                     )}
