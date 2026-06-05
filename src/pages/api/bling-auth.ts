@@ -218,6 +218,7 @@ export async function createVenda(dados: {
   };
   condicaoPagamento?: string;
   observacao?: string;
+  descontoValor?: number;
 }) {
   const today = new Date().toISOString().split("T")[0];
   const telefone = dados.telefone?.replace(/\D/g, "") || undefined;
@@ -270,6 +271,7 @@ export async function createVenda(dados: {
         uf: dados.endereco.uf,
       },
     },
+    ...(dados.descontoValor ? { desconto: { valor: dados.descontoValor, unidade: "R$" } } : {}),
     pagamento: {
       formaPagamento: "Dinheiro",
       ...(dados.condicaoPagamento ? { condicaoPagamento: dados.condicaoPagamento } : {}),

@@ -39,6 +39,7 @@ export const POST: APIRoute = async ({ request }) => {
       nome, email, cpfCnpj, telefone,
       itens = [], total, endereco = {},
       freteSelecionado = null, condicaoPagamento, cupom,
+      descontoValor = 0, descontoPercent = 0,
     } = orderData;
 
     const observacao = `PEDIDO INFLUENCER — Cupom: ${cupom}`;
@@ -65,6 +66,8 @@ export const POST: APIRoute = async ({ request }) => {
         address: addressStr,
         condicaoPagamento,
         observacao: "Pedido gratuito",
+        descontoPercent: 100,
+        descontoValor: total,
       });
       await saveOrderNormalized(orderId, { ...orderData, observacao, emailSent: 1, blingProcessed: 0, meProcessed: 0 });
     } catch (e) {
@@ -88,6 +91,7 @@ export const POST: APIRoute = async ({ request }) => {
         },
         condicaoPagamento,
         observacao,
+        descontoValor: total, // 100% de desconto = valor integral
       });
       blingProcessed = 1;
       await saveOrderNormalized(orderId, { ...orderData, observacao, emailSent: 1, blingProcessed: 1, meProcessed: 0 });

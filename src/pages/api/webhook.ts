@@ -73,6 +73,8 @@ export const POST: APIRoute = async ({ request }) => {
       freteSelecionado = null,
       observacao = "",
       condicaoPagamento = "",
+      descontoPercent = 0,
+      descontoValor = 0,
     } = orderMeta;
 
     // If order already fully processed, skip everything immediately
@@ -100,6 +102,8 @@ export const POST: APIRoute = async ({ request }) => {
           address: `${endereco.logradouro}, ${endereco.numero}${endereco.complemento ? `, ${endereco.complemento}` : ""} — ${endereco.cidade}/${endereco.uf} — CEP ${endereco.cep}`,
           condicaoPagamento,
           observacao,
+          descontoPercent,
+          descontoValor,
         });
         console.log("[Resend] Confirmation email sent to:", email);
 
@@ -146,6 +150,7 @@ export const POST: APIRoute = async ({ request }) => {
             },
             condicaoPagamento,
             observacao,
+            descontoValor,
           });
 
           const blingVendaId = result?.venda?.data?.id ?? null;

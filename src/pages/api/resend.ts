@@ -56,6 +56,8 @@ export async function sendConfirmationEmail(params: {
   address: string;
   condicaoPagamento?: string;
   observacao?: string;
+  descontoPercent?: number;
+  descontoValor?: number;
 }) {
   const itemsHtml = params.items
     .map(
@@ -77,6 +79,7 @@ export async function sendConfirmationEmail(params: {
     <table class="items">
       <thead><tr><th>Produto</th><th style="text-align:center">Qtd</th><th style="text-align:right">Preço</th></tr></thead>
       <tbody>${itemsHtml}</tbody>
+      ${params.descontoValor && params.descontoValor > 0 ? `<tr><td colspan="2" style="padding:8px 12px;font-size:13px;color:#e53e3e">Desconto${params.descontoPercent ? ` (${params.descontoPercent}%)` : ""}</td><td style="padding:8px 12px;font-size:13px;color:#e53e3e;text-align:right">- R$ ${params.descontoValor.toFixed(2)}</td></tr>` : ""}
       <tr class="total-row"><td colspan="2">Total</td><td>R$ ${params.total.toFixed(2)}</td></tr>
     </table>
 
@@ -95,6 +98,7 @@ export async function sendConfirmationEmail(params: {
     <table class="items">
       <thead><tr><th>Produto</th><th style="text-align:center">Qtd</th><th style="text-align:right">Preço</th></tr></thead>
       <tbody>${itemsHtml}</tbody>
+      ${params.descontoValor && params.descontoValor > 0 ? `<tr><td colspan="2" style="padding:8px 12px;font-size:13px;color:#e53e3e">Desconto${params.descontoPercent ? ` (${params.descontoPercent}%)` : ""}</td><td style="padding:8px 12px;font-size:13px;color:#e53e3e;text-align:right">- R$ ${params.descontoValor.toFixed(2)}</td></tr>` : ""}
       <tr class="total-row"><td colspan="2">Total</td><td>R$ ${params.total.toFixed(2)}</td></tr>
     </table>
 
