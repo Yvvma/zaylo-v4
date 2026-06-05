@@ -5,7 +5,10 @@ interface OrderData {
   email: string;
   itens: any[];
   total: number;
+  totalPrice: number;
   fretePreco: number;
+  descontoPercent?: number | null;
+  descontoValor?: number;
   freteSelecionado: any;
   shipmentOrderId?: string;
   orderId?: string;
@@ -106,14 +109,20 @@ export default function SuccessPage() {
                 ))}
               </ul>
               <div className="space-y-1 pt-3 mt-2 border-t border-gray-200">
-                <div className="flex justify-between text-sm text-gray-500">
-                  <span>Subtotal</span>
-                  <span>R$ {(orderData.total - (orderData.fretePreco || 0)).toFixed(2)}</span>
-                </div>
                 {orderData.fretePreco > 0 && (
                   <div className="flex justify-between text-sm text-gray-500">
                     <span>Frete</span>
                     <span>R$ {orderData.fretePreco.toFixed(2)}</span>
+                  </div>
+                )}
+                <div className="flex justify-between text-sm text-gray-500">
+                  <span>Subtotal</span>
+                  <span>R$ {(orderData.totalPrice ?? orderData.total).toFixed(2)}</span>
+                </div>
+                {(orderData.descontoValor ?? 0) > 0 && (
+                  <div className="flex justify-between text-sm text-red-500">
+                    <span>Desconto{orderData.descontoPercent ? ` (${orderData.descontoPercent}%)` : ""}</span>
+                    <span>- R$ {(orderData.descontoValor ?? 0).toFixed(2)}</span>
                   </div>
                 )}
                 <div className="flex justify-between items-center pt-2 border-t border-gray-200">

@@ -35,7 +35,7 @@ export const POST: APIRoute = async ({ request }) => {
     const event = await request.json();
     console.log("[Webhook] Event:", event.event, "| Payment:", event.payment?.id);
 
-    if (event.event !== "PAYMENT_CONFIRMED") {
+    if (event.event !== "PAYMENT_RECEIVED") {
       return new Response(JSON.stringify({ ok: true, skipped: true }), { status: 200 });
     }
 
