@@ -1,7 +1,7 @@
 import type { APIRoute } from "astro";
 import { saveOrder } from "./order-store";
 
-const ASAAS_API_URL = import.meta.env.PUBLIC_ASAAS_API_URL ?? "https://asaas.com/api/v3";
+const ASAAS_API_URL = import.meta.env.PUBLIC_ASAAS_API_URL ?? "https://api.asaas.com/v3";
 const ASAAS_API_KEY = import.meta.env.ASAAS_API_KEY ?? "";
 
 export const POST: APIRoute = async ({ request }) => {
@@ -45,6 +45,7 @@ export const POST: APIRoute = async ({ request }) => {
 
     const headers: Record<string, string> = {
       "Content-Type": "application/json",
+      "User-Agent": "zaylo",
       access_token: ASAAS_API_KEY,
     };
 

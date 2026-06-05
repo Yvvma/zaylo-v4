@@ -136,6 +136,7 @@ export async function setupOrdersTable() {
       total REAL NOT NULL,
       frete_preco REAL,
       frete_servico TEXT,
+      frete_service_id TEXT,
       condicao_pagamento TEXT,
       observacao TEXT,
       cupom TEXT,
@@ -147,6 +148,7 @@ export async function setupOrdersTable() {
       created_at INTEGER NOT NULL
     )
   `);
+  await db().execute("ALTER TABLE orders ADD COLUMN frete_service_id TEXT").catch(() => {});
   await db().execute(`
     CREATE TABLE IF NOT EXISTS order_items (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -172,27 +174,31 @@ export async function saveOrderNormalized(orderId: string, data: any) {
     sql: `INSERT INTO orders (
             id, nome, email, cpf_cnpj, telefone,
             cep, logradouro, numero, complemento, bairro, cidade, uf,
-            total, frete_preco, frete_servico, condicao_pagamento, observacao,
+            total, frete_preco, frete_servico, frete_service_id, condicao_pagamento, observacao,
             cupom, desconto_percent, desconto_valor,
             email_sent, bling_processed, me_processed, created_at
-          ) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,0,0,0,?)
+          ) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)
           ON CONFLICT(id) DO UPDATE SET
             nome=excluded.nome, email=excluded.email, cpf_cnpj=excluded.cpf_cnpj,
             telefone=excluded.telefone, cep=excluded.cep, logradouro=excluded.logradouro,
             numero=excluded.numero, complemento=excluded.complemento, bairro=excluded.bairro,
             cidade=excluded.cidade, uf=excluded.uf, total=excluded.total,
             frete_preco=excluded.frete_preco, frete_servico=excluded.frete_servico,
+            frete_service_id=excluded.frete_service_id,
             condicao_pagamento=excluded.condicao_pagamento, observacao=excluded.observacao,
             cupom=excluded.cupom, desconto_percent=excluded.desconto_percent,
-            desconto_valor=excluded.desconto_valor`,
+            desconto_valor=excluded.desconto_valor,
+            email_sent=excluded.email_sent, bling_processed=excluded.bling_processed,
+            me_processed=excluded.me_processed`,
     args: [
       orderId,
       data.nome ?? "", data.email ?? "", data.cpfCnpj ?? null, data.telefone ?? null,
       e.cep ?? null, e.logradouro ?? null, e.numero ?? null, e.complemento ?? null,
       e.bairro ?? null, e.cidade ?? null, e.uf ?? null,
-      data.total ?? 0, frete.price ?? null, frete.name ?? null,
+      data.total ?? 0, frete.price ?? null, frete.name ?? null, frete.serviceId ?? null,
       data.condicaoPagamento ?? null, data.observacao ?? null,
       data.cupom ?? null, data.descontoPercent ?? null, data.descontoValor ?? null,
+      data.emailSent ?? 0, data.blingProcessed ?? 0, data.meProcessed ?? 0,
       Date.now(),
     ],
   });
@@ -226,7 +232,7 @@ export async function getOrderNormalized(orderId: string) {
       cep: row.cep, logradouro: row.logradouro, numero: row.numero,
       complemento: row.complemento, bairro: row.bairro, cidade: row.cidade, uf: row.uf,
     },
-    freteSelecionado: { price: row.frete_preco, name: row.frete_servico },
+    freteSelecionado: { price: row.frete_preco, name: row.frete_servico, serviceId: row.frete_service_id },
     emailSent: row.email_sent, blingProcessed: row.bling_processed, meProcessed: row.me_processed,
     itens: items.map(i => ({
       id: i.produto_id, slug: i.slug, titulo: i.titulo,
