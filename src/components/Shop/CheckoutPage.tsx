@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
 
-type PaymentMethod = "CREDIT_CARD" | "BOLETO" | "PIX";
+type PaymentMethod = "CREDIT_CARD" | "BOLETO" | "PIX" | "INFLUENCER";
 
 interface CartItem {
   id: number;
@@ -397,6 +397,15 @@ const CheckoutPage = () => {
   const [couponOpen, setCouponOpen] = useState(false);
   const [couponCode, setCouponCode] = useState("");
   const [appliedCoupon, setAppliedCoupon] = useState<{ code: string; discountPercent: number } | null>(null);
+
+  // Auto-switch payment method based on coupon
+  useEffect(() => {
+    if (appliedCoupon?.discountPercent === 100) {
+      setPaymentMethod("INFLUENCER");
+    } else if (!appliedCoupon && paymentMethod === "INFLUENCER") {
+      setPaymentMethod("CREDIT_CARD");
+    }
+  }, [appliedCoupon]);
 
   const shippingPrice = selectedShipping?.price || 0;
   const subtotalWithShipping = totalPrice + shippingPrice;
@@ -882,54 +891,108 @@ const CheckoutPage = () => {
               </div>
             </div>
 
-            {/* Payment Section - With Accordion */}
+            {/* Payment Section */}
             <Accordion title="Pagamento" isOpen={paymentOpen} onToggle={() => setPaymentOpen(!paymentOpen)}>
               <div className="space-y-4">
                 {/* Payment method buttons - stacked vertically */}
                 <div className="flex flex-col gap-2">
-                  {(["CREDIT_CARD", "PIX", "BOLETO"] as PaymentMethod[]).map((m) => {
-                    const icons: Record<PaymentMethod, React.ReactNode> = {
-                      CREDIT_CARD: (
-                        <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
-                        </svg>
-                      ),
-                      PIX: (
-                        <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
-                        </svg>
-                      ),
-                      BOLETO: (
-                        <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                        </svg>
-                      ),
-                    };
-                    const labels: Record<PaymentMethod, string> = {
-                      CREDIT_CARD: "Cartão de crédito",
-                      PIX: "PIX",
-                      BOLETO: "Boleto",
-                    };
-                    return (
+                  {appliedCoupon?.discountPercent === 100 ? (
+                    <>
+                      {(["CREDIT_CARD", "PIX", "BOLETO"] as PaymentMethod[]).map((m) => {
+                        const icons: Record<PaymentMethod, React.ReactNode> = {
+                          CREDIT_CARD: (
+                            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
+                            </svg>
+                          ),
+                          PIX: (
+                            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+                            </svg>
+                          ),
+                          BOLETO: (
+                            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                            </svg>
+                          ),
+                        };
+                        const labels: Record<PaymentMethod, string> = {
+                          CREDIT_CARD: "Cartão de crédito",
+                          PIX: "PIX",
+                          BOLETO: "Boleto",
+                        };
+                        return (
+                          <button
+                            key={m}
+                            type="button"
+                            disabled
+                            className="py-2.5 px-3 text-xs font-medium rounded-lg border border-gray-200 text-gray-300 bg-gray-50 cursor-not-allowed flex items-center justify-center gap-1.5"
+                          >
+                            {icons[m]}
+                            {labels[m]}
+                          </button>
+                        );
+                      })}
                       <button
-                        key={m}
                         type="button"
-                        onClick={() => setPaymentMethod(m)}
+                        onClick={() => setPaymentMethod("INFLUENCER")}
                         className={`py-2.5 px-3 text-xs font-medium rounded-lg border transition-all flex items-center justify-center gap-1.5 ${
-                          paymentMethod === m
-                            ? "border-gray-900 bg-gray-900 text-white"
-                            : "border-gray-200 text-gray-600 hover:border-gray-400"
+                          paymentMethod === "INFLUENCER"
+                            ? "border-amber-500 bg-amber-500 text-white"
+                            : "border-amber-200 text-amber-700 hover:border-amber-400"
                         }`}
                       >
-                        {icons[m]}
-                        {labels[m]}
+                        <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" />
+                        </svg>
+                        INFLUENCER
                       </button>
-                    );
-                  })}
+                    </>
+                  ) : (
+                    (["CREDIT_CARD", "PIX", "BOLETO"] as PaymentMethod[]).map((m) => {
+                      const icons: Record<PaymentMethod, React.ReactNode> = {
+                        CREDIT_CARD: (
+                          <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
+                          </svg>
+                        ),
+                        PIX: (
+                          <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+                          </svg>
+                        ),
+                        BOLETO: (
+                          <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                          </svg>
+                        ),
+                      };
+                      const labels: Record<PaymentMethod, string> = {
+                        CREDIT_CARD: "Cartão de crédito",
+                        PIX: "PIX",
+                        BOLETO: "Boleto",
+                      };
+                      return (
+                        <button
+                          key={m}
+                          type="button"
+                          onClick={() => setPaymentMethod(m)}
+                          className={`py-2.5 px-3 text-xs font-medium rounded-lg border transition-all flex items-center justify-center gap-1.5 ${
+                            paymentMethod === m
+                              ? "border-gray-900 bg-gray-900 text-white"
+                              : "border-gray-200 text-gray-600 hover:border-gray-400"
+                          }`}
+                        >
+                          {icons[m]}
+                          {labels[m]}
+                        </button>
+                      );
+                    })
+                  )}
                 </div>
 
                 {/* Credit card form */}
-                {paymentMethod === "CREDIT_CARD" && (
+                {paymentMethod === "CREDIT_CARD" && appliedCoupon?.discountPercent !== 100 && (
                   <div className="border border-gray-200 rounded-xl p-4">
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                       <div className="sm:col-span-2">
@@ -994,15 +1057,21 @@ const CheckoutPage = () => {
                   </div>
                 )}
 
-                {paymentMethod === "PIX" && (
+                {paymentMethod === "PIX" && appliedCoupon?.discountPercent !== 100 && (
                   <div className="bg-green-50 border border-green-100 rounded-xl p-4 text-sm text-green-800">
                     Após confirmar, você receberá um QR Code para pagar via PIX. O pagamento é confirmado instantaneamente.
                   </div>
                 )}
 
-                {paymentMethod === "BOLETO" && (
+                {paymentMethod === "BOLETO" && appliedCoupon?.discountPercent !== 100 && (
                   <div className="bg-blue-50 border border-blue-100 rounded-xl p-4 text-sm text-blue-800">
                     O boleto bancário será gerado após a confirmação. O prazo de vencimento é de <strong>3 dias úteis</strong>.
+                  </div>
+                )}
+
+                {paymentMethod === "INFLUENCER" && (
+                  <div className="bg-amber-50 border border-amber-200 rounded-xl p-4 text-sm text-amber-800">
+                    Cupom de influencer ativado — pedido será <strong>100% gratuito</strong>, sem necessidade de pagamento.
                   </div>
                 )}
               </div>
@@ -1022,13 +1091,19 @@ const CheckoutPage = () => {
               disabled={isSubmitting || !selectedShipping}
               className="w-full bg-gray-900 text-white font-medium text-sm rounded-xl py-3.5 hover:bg-gray-800 active:scale-[0.99] transition-all disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              {isSubmitting ? "Aguardando confirmação..." : `Finalizar pedido · ${paymentMethod === "CREDIT_CARD" && installmentCount > 1 ? `${installmentCount}x de ${formatCurrency(calcInstallmentAmount(installmentCount))}` : formatCurrency(total)}`}
+              {isSubmitting
+                ? "Aguardando confirmação..."
+                : appliedCoupon?.discountPercent === 100
+                  ? "Finalizar compra com 100% de desconto"
+                  : `Finalizar pedido · ${paymentMethod === "CREDIT_CARD" && installmentCount > 1 ? `${installmentCount}x de ${formatCurrency(calcInstallmentAmount(installmentCount))}` : formatCurrency(total)}`}
             </button>
 
-            <p className="text-center text-xs text-gray-400">
-              Pagamento processado com segurança via{" "}
-              <span className="font-medium text-gray-500">Asaas</span>
-            </p>
+            {appliedCoupon?.discountPercent !== 100 && (
+              <p className="text-center text-xs text-gray-400">
+                Pagamento processado com segurança via{" "}
+                <span className="font-medium text-gray-500">Asaas</span>
+              </p>
+            )}
             <div className="text-center
             justify-center items-center flex flex-row gap-2 text-xs font-body text-gray-400">
             <a href='/privacidade'>Politica de Privacidade</a>
@@ -1157,7 +1232,9 @@ const CheckoutPage = () => {
                     )}
                   </span>
                 </div>
-                {paymentMethod && (
+                {appliedCoupon?.discountPercent === 100 ? (
+                  <p className="text-xs text-green-600 pt-1 font-medium">100% de desconto — pedido gratuito</p>
+                ) : paymentMethod && (
                   <p className="text-xs text-gray-400 pt-1">
                     {paymentMethod === "CREDIT_CARD"
                       ? `Cartão de Crédito${installmentCount > 1 ? ` - ${installmentCount}x` : ""}`

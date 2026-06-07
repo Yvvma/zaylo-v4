@@ -29,9 +29,9 @@ async function blingRequest(method: string, path: string, body?: unknown, tentat
   const data = await res.json().catch(() => ({}));
   if (!res.ok) {
     const msg = JSON.stringify(data);
-    // Rate limit: retry com backoff (max 3 tentativas)
-    if (msg.includes("Too many requests") && tentativa < 3) {
-      const espera = tentativa * 2000;
+    // Rate limit: retry com backoff exponencial (max 5 tentativas)
+    if (msg.includes("Too many requests") && tentativa < 5) {
+      const espera = Math.pow(2, tentativa) * 2000;
       console.warn(`[Bling] Rate limited, retrying in ${espera}ms (tentativa ${tentativa})`);
       await sleep(espera);
       return blingRequest(method, path, body, tentativa + 1);
@@ -111,20 +111,18 @@ async function upsertContato(dados: {
 
   async function buscarPorDoc(numero: string): Promise<number | null> {
     const formatado = formatarDoc(numero);
-    for (const doc of [numero, formatado]) {
-      try {
-        const search = await blingRequest("GET", `/contatos?numeroDocumento=${encodeURIComponent(doc)}`) as any;
-        const found = search?.data?.[0];
-        if (found?.id) {
-          const foundDoc = (found.numeroDocumento ?? "").replace(/\D/g, "");
-          if (foundDoc === numero) {
-            console.log("[Bling] Contato encontrado por documento:", found.id);
-            return found.id as number;
-          }
+    try {
+      const search = await blingRequest("GET", `/contatos?numeroDocumento=${encodeURIComponent(formatado)}`) as any;
+      const found = search?.data?.[0];
+      if (found?.id) {
+        const foundDoc = (found.numeroDocumento ?? "").replace(/\D/g, "");
+        if (foundDoc === numero) {
+          console.log("[Bling] Contato encontrado por documento:", found.id);
+          return found.id as number;
         }
-      } catch (e) {
-        console.warn("[Bling] Busca por documento falhou:", e);
       }
+    } catch (e) {
+      console.warn("[Bling] Busca por documento falhou:", e);
     }
     return null;
   }
@@ -233,12 +231,7 @@ export async function createVenda(dados: {
     endereco: dados.endereco,
   });
 
-  const observacoesInternas = [
-    dados.observacao,
-    dados.descontoPercent ? `Desconto: ${dados.descontoPercent}%` : null,
-  ].filter(Boolean).join(" | ");
-
-  const venda = await blingRequest("POST", "/pedidos/vendas", {
+  const payload: Record<string, any> = {
     data: today,
     dataSaida: today,
     situacao: { id: 6 },
@@ -268,7 +261,6 @@ export async function createVenda(dados: {
       valor: item.valor,
     })),
     transporte: {
-      ...(dados.fretePreco ? { frete: dados.fretePreco, fretePorConta: 0 } : {}),
       enderecoEntrega: {
         endereco: dados.endereco.logradouro,
         numero: dados.endereco.numero,
@@ -284,9 +276,19 @@ export async function createVenda(dados: {
       formaPagamento: "Dinheiro",
       ...(dados.condicaoPagamento ? { condicaoPagamento: dados.condicaoPagamento } : {}),
     },
-    observacoes: dados.observacao,
-    observacoesInternas,
-  }) as any;
+    observacao: [
+      dados.observacao,
+      dados.descontoPercent ? `Desconto: ${dados.descontoPercent}%` : null,
+    ].filter(Boolean).join(" | "),
+  };
+
+  if (dados.fretePreco) {
+    payload.transporte.frete = dados.fretePreco;
+    payload.transporte.fretePorConta = 0;
+  }
+
+  const venda = await blingRequest("POST", "/pedidos/vendas", payload) as any;
+  console.log("[Bling] Resposta completa da venda:", JSON.stringify(venda).slice(0, 500));
 
   return {
     venda,
