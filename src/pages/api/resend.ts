@@ -1,7 +1,7 @@
 import type { APIRoute } from "astro";
 
 const RESEND_TOKEN = import.meta.env.RESEND_TOKEN ?? "";
-const COMPANY_EMAIL = "contato@zaylo.com.br";
+const COMPANY_EMAIL = "host.zaylo@gmail.com";
 const FROM_EMAIL = "contato@zaylo.com.br";
 const SITE_URL = import.meta.env.SITE_URL ?? "https://zaylo.com.br";
 
