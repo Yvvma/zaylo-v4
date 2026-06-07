@@ -12,6 +12,32 @@ export type ShippingSpecs = {
   length: number;
 };
 
+export function calculatePackageDimensions(items: Array<{ slug?: string; selectedSize?: string; quantity: number }>) {
+  let maxWidth = 0;
+  let maxHeight = 0;
+  let totalLength = 0;
+
+  for (const item of items) {
+    if (!item.slug) {
+      maxWidth = Math.max(maxWidth, 15);
+      maxHeight = Math.max(maxHeight, 10);
+      totalLength += 5 * item.quantity;
+      continue;
+    }
+    const specs = getShippingSpecs(item.slug, item.selectedSize);
+    maxWidth = Math.max(maxWidth, specs.width);
+    maxHeight = Math.max(maxHeight, specs.height);
+    totalLength += specs.length * item.quantity;
+  }
+
+  // Minimums for Correios
+  maxWidth = Math.max(maxWidth, 15);
+  maxHeight = Math.max(maxHeight, 10);
+  totalLength = Math.max(totalLength, 2);
+
+  return { width: maxWidth, height: maxHeight, length: totalLength };
+}
+
 export const getShippingSpecs = (slug: string, size?: string): ShippingSpecs => {
   const specs: Record<string, Record<string, ShippingSpecs>> = {
     "bungee-harness": {
@@ -34,6 +60,9 @@ export const getShippingSpecs = (slug: string, size?: string): ShippingSpecs => 
     },
     "freedom-leash": {
       "Único": { weight: 0.305, width: 24, height: 16, length: 3 },
+    },
+    "bungee-leash": {
+      "Único": { weight: 0.240, width: 12, height: 22.5, length: 3 },
     },
     "ozy-vest": {
       "XS": { weight: 0.225, width: 20, height: 11, length: 3 },

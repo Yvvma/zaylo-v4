@@ -1,48 +1,35 @@
-# Astro Starter Kit: Basics
 
-```sh
-npm create astro@latest -- --template basics
-```
+Peso e tamanho 
 
-[![Open in StackBlitz](https://developer.stackblitz.com/img/open_in_stackblitz.svg)](https://stackblitz.com/github/withastro/astro/tree/latest/examples/basics)
-[![Open with CodeSandbox](https://assets.codesandbox.io/github/button-edit-lime.svg)](https://codesandbox.io/p/sandbox/github/withastro/astro/tree/latest/examples/basics)
-[![Open in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://codespaces.new/withastro/astro?devcontainer_path=.devcontainer/basics/devcontainer.json)
+Bungeee harness PP - 60g
+Bungee harness P - 80g
+Bungee harness M - 115g
+Bungee harness G - 195g
+embalagem 21x9 cm 
 
-> 🧑‍🚀 **Seasoned astronaut?** Delete this file. Have fun!
+GUIA LEASH -165g
+22x16 embalagem 
 
-![just-the-basics](https://github.com/withastro/astro/assets/2244813/a0a5533c-a856-4198-8470-2d67b1d7c554)
+DOUBLE LEASH - 280g
+22x16 embalagem 
 
-## 🚀 Project Structure
+GUIA BUNGEE - 240g
+12x22,5 embalage
 
-Inside of your Astro project, you'll see the following folders and files:
+GUIA FREEDOM - 305g
+24x16 embalagem
 
-```text
-/
-├── public/
-│   └── favicon.svg
-├── src/
-│   ├── layouts/
-│   │   └── Layout.astro
-│   └── pages/
-│       └── index.astro
-└── package.json
-```
+OzyVest XS- 225g
+embalagem 20x11
 
-To learn more about the folder structure of an Astro project, refer to [our guide on project structure](https://docs.astro.build/en/basics/project-structure/).
+OzyVest S - 220g
+embalagem 21,5x11
 
-## 🧞 Commands
+OzyVest M -300g
+embalagem 25,5 x 11
 
-All commands are run from the root of the project, from a terminal:
+Ozyvest L - 340g
+embalagem 28x11
 
-| Command                   | Action                                           |
-| :------------------------ | :----------------------------------------------- |
-| `npm install`             | Installs dependencies                            |
-| `npm run dev`             | Starts local dev server at `localhost:4321`      |
-| `npm run build`           | Build your production site to `./dist/`          |
-| `npm run preview`         | Preview your build locally, before deploying     |
-| `npm run astro ...`       | Run CLI commands like `astro add`, `astro check` |
-| `npm run astro -- --help` | Get help using the Astro CLI                     |
-
-## 👀 Want to learn more?
-
-Feel free to check [our documentation](https://docs.astro.build) or jump into our [Discord server](https://astro.build/chat).
+OZYVEST XL - 350G
+embalagem 32x11

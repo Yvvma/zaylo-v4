@@ -4,6 +4,7 @@ import { getOrderNormalized, saveOrderNormalized, setupOrdersTable } from "./tur
 import { addToCart, checkout, generate } from "./melhor-envio-auth";
 import { createVenda } from "./bling-auth";
 import { buscarBlingId } from "../../data/bling-produtos";
+import { calculatePackageDimensions } from "../../data/products";
 import { setupMETokensTable, setupBlingTokensTable } from "./turso";
 
 const ASAAS_WEBHOOK_SECRET = import.meta.env.ASAAS_WEBHOOK_SECRET ?? "";
@@ -186,6 +187,9 @@ export const POST: APIRoute = async ({ request }) => {
             itens.reduce((s: number, i: any) => s + (i.peso ?? 0.3) * i.quantidade, 0),
             0.1
           );
+          const pkg = calculatePackageDimensions(itens.map((i: any) => ({
+            slug: i.slug, selectedSize: i.tamanhoSelecionado, quantity: i.quantidade,
+          })));
 
           const cartItem = await addToCart({
             service: parseInt(freteSelecionado.serviceId),
@@ -212,9 +216,9 @@ export const POST: APIRoute = async ({ request }) => {
               unitary_value: String(i.preco),
             })),
             volumes: [{
-              height: 25,
-              width: 25,
-              length: 35,
+              height: pkg.height,
+              width: pkg.width,
+              length: pkg.length,
               weight: totalWeight,
             }],
             options: {

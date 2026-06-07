@@ -3,6 +3,7 @@ import { saveOrderNormalized, setupOrdersTable, setupBlingTokensTable, setupMETo
 import { createVenda } from "./bling-auth";
 import { addToCart, checkout, generate } from "./melhor-envio-auth";
 import { buscarBlingId } from "../../data/bling-produtos";
+import { calculatePackageDimensions } from "../../data/products";
 import { sendConfirmationEmail, sendInfluencerAlertEmail } from "./resend";
 
 const ME_CNPJ = (import.meta.env.ME_FROM_CNPJ ?? "").replace(/\D/g, "");
@@ -92,7 +93,7 @@ export const POST: APIRoute = async ({ request }) => {
         },
         condicaoPagamento,
         observacao,
-        descontoValor: total, // 100% de desconto = valor integral
+        descontoValor, // 100% de desconto = valor integral
         descontoPercent: 100,
         fretePreco: freteSelecionado?.price ?? 0,
       });
@@ -109,6 +110,9 @@ export const POST: APIRoute = async ({ request }) => {
       try {
         const insuranceValue = itens.reduce((s: number, i: any) => s + i.preco * i.quantidade, 0);
         const totalWeight = Math.max(itens.reduce((s: number, i: any) => s + (i.peso ?? 0.3) * i.quantidade, 0), 0.1);
+        const pkg = calculatePackageDimensions(itens.map((i: any) => ({
+          slug: i.slug, selectedSize: i.tamanhoSelecionado, quantity: i.quantidade,
+        })));
 
         const cartItem = await addToCart({
           service: parseInt(freteSelecionado.serviceId),
@@ -124,7 +128,7 @@ export const POST: APIRoute = async ({ request }) => {
             postal_code: endereco.cep.replace(/\D/g, ""),
           },
           products: itens.map((i: any) => ({ name: i.titulo, quantity: String(i.quantidade), unitary_value: String(i.preco) })),
-          volumes: [{ height: 25, width: 25, length: 35, weight: totalWeight }],
+          volumes: [{ height: pkg.height, width: pkg.width, length: pkg.length, weight: totalWeight }],
           options: {
             insurance_value: insuranceValue, receipt: false, own_hand: false,
             reverse: false, non_commercial: true, platform: "Zaylo Shop",

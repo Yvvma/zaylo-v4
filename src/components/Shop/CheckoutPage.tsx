@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
+import { getShippingSpecs, calculatePackageDimensions } from "../../data/products";
 
 type PaymentMethod = "CREDIT_CARD" | "BOLETO" | "PIX" | "INFLUENCER";
 
@@ -14,6 +15,7 @@ interface CartItem {
   selectedSize?: string;
   weight?: number;
   dimensions?: { width: number; height: number; length: number };
+  slug?: string;
 }
 
 interface AsaasCustomer {
@@ -150,15 +152,18 @@ async function calculateShipping(items: CartItem[], postalCode: string) {
       action: "calculateShipment",
       from: { postal_code: "13574020" },
       to: { postal_code: postalCode },
-      products: items.map(item => ({
-        id: String(item.id),
-        width: 10,
-        height: 10,
-        length: 15,
-        weight: item.weight || 0.3,
-        insurance_value: item.price * item.quantity,
-        quantity: item.quantity,
-      })),
+      products: items.map(item => {
+        const specs = item.slug ? getShippingSpecs(item.slug, item.selectedSize) : null;
+        return {
+          id: String(item.id),
+          width: specs?.width ?? 10,
+          height: specs?.height ?? 10,
+          length: specs?.length ?? 15,
+          weight: specs?.weight ?? item.weight ?? 0.3,
+          insurance_value: item.price * item.quantity,
+          quantity: item.quantity,
+        };
+      }),
     }),
   });
   const data = await res.json().catch(() => ({}));
