@@ -104,6 +104,7 @@ export const POST: APIRoute = async ({ request }) => {
           observacao,
           descontoPercent,
           descontoValor,
+          fretePreco: freteSelecionado?.price ?? 0,
         });
         console.log("[Resend] Confirmation email sent to:", email);
 

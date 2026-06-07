@@ -58,6 +58,7 @@ export async function sendConfirmationEmail(params: {
   observacao?: string;
   descontoPercent?: number;
   descontoValor?: number;
+  fretePreco?: number;
 }) {
   const itemsHtml = params.items
     .map(
@@ -80,9 +81,11 @@ export async function sendConfirmationEmail(params: {
       <thead><tr><th>Produto</th><th style="text-align:center">Qtd</th><th style="text-align:right">Preço</th></tr></thead>
       <tbody>${itemsHtml}</tbody>
       ${params.descontoValor && params.descontoValor > 0 ? `<tr><td colspan="2" style="padding:8px 12px;font-size:13px;color:#e53e3e">Desconto${params.descontoPercent ? ` (${params.descontoPercent}%)` : ""}</td><td style="padding:8px 12px;font-size:13px;color:#e53e3e;text-align:right">- R$ ${params.descontoValor.toFixed(2)}</td></tr>` : ""}
+      ${params.fretePreco ? `<tr><td colspan="2" style="padding:8px 12px;font-size:13px;color:#666">Frete</td><td style="padding:8px 12px;font-size:13px;color:#666;text-align:right">R$ ${params.fretePreco.toFixed(2)}</td></tr>` : ""}
       <tr class="total-row"><td colspan="2">Total</td><td>R$ ${params.total.toFixed(2)}</td></tr>
     </table>
 
+    <p style="font-size:13px;color:#888"><strong>Endereço de entrega:</strong><br>${params.address}</p>
     <p style="font-size:13px;color:#888">Você receberá o código de rastreio assim que a etiqueta for postada.</p>
     <p style="margin-top:24px;font-size:13px;color:#888">Equipe Zaylo</p>
   `);
@@ -99,6 +102,7 @@ export async function sendConfirmationEmail(params: {
       <thead><tr><th>Produto</th><th style="text-align:center">Qtd</th><th style="text-align:right">Preço</th></tr></thead>
       <tbody>${itemsHtml}</tbody>
       ${params.descontoValor && params.descontoValor > 0 ? `<tr><td colspan="2" style="padding:8px 12px;font-size:13px;color:#e53e3e">Desconto${params.descontoPercent ? ` (${params.descontoPercent}%)` : ""}</td><td style="padding:8px 12px;font-size:13px;color:#e53e3e;text-align:right">- R$ ${params.descontoValor.toFixed(2)}</td></tr>` : ""}
+      ${params.fretePreco ? `<tr><td colspan="2" style="padding:8px 12px;font-size:13px;color:#666">Frete</td><td style="padding:8px 12px;font-size:13px;color:#666;text-align:right">R$ ${params.fretePreco.toFixed(2)}</td></tr>` : ""}
       <tr class="total-row"><td colspan="2">Total</td><td>R$ ${params.total.toFixed(2)}</td></tr>
     </table>
 

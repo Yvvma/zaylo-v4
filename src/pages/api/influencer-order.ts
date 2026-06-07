@@ -68,6 +68,7 @@ export const POST: APIRoute = async ({ request }) => {
         observacao: "Pedido gratuito",
         descontoPercent: 100,
         descontoValor: total,
+        fretePreco: freteSelecionado?.price ?? 0,
       });
       await saveOrderNormalized(orderId, { ...orderData, observacao, emailSent: 1, blingProcessed: 0, meProcessed: 0 });
     } catch (e) {
