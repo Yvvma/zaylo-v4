@@ -59,6 +59,7 @@ export async function sendConfirmationEmail(params: {
   descontoPercent?: number;
   descontoValor?: number;
   fretePreco?: number;
+  customerOnly?: boolean;
 }) {
   const itemsHtml = params.items
     .map(
@@ -109,10 +110,14 @@ export async function sendConfirmationEmail(params: {
     <p style="font-size:13px;color:#888;font-style:italic">Aguardando postagem para gerar código de rastreio.</p>
   `);
 
-  await Promise.all([
-    sendEmail(params.customerEmail, `Pedido ${params.orderId} confirmado | ZAYLO`, clientHtml, "Zaylo"),
-    sendEmail(COMPANY_EMAIL, `Nova venda — Pedido ${params.orderId} | ZAYLO`, companyHtml, `Pedido ${params.orderId} | Zaylo`),
-  ]);
+  if (params.customerOnly) {
+    await sendEmail(params.customerEmail, `Pedido ${params.orderId} confirmado | ZAYLO`, clientHtml, "Zaylo");
+  } else {
+    await Promise.all([
+      sendEmail(params.customerEmail, `Pedido ${params.orderId} confirmado | ZAYLO`, clientHtml, "Zaylo"),
+      sendEmail(COMPANY_EMAIL, `Nova venda — Pedido ${params.orderId} | ZAYLO`, companyHtml, `Pedido ${params.orderId} | Zaylo`),
+    ]);
+  }
 }
 
 export async function sendInfluencerAlertEmail(params: {
