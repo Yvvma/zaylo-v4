@@ -151,6 +151,8 @@ export const POST: APIRoute = async ({ request }) => {
             condicaoPagamento,
             observacao,
             descontoValor,
+            descontoPercent,
+            fretePreco: freteSelecionado?.price ?? 0,
           });
 
           const blingVendaId = result?.venda?.data?.id ?? null;

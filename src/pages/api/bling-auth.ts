@@ -219,6 +219,8 @@ export async function createVenda(dados: {
   condicaoPagamento?: string;
   observacao?: string;
   descontoValor?: number;
+  descontoPercent?: number;
+  fretePreco?: number;
 }) {
   const today = new Date().toISOString().split("T")[0];
   const telefone = dados.telefone?.replace(/\D/g, "") || undefined;
@@ -230,6 +232,11 @@ export async function createVenda(dados: {
     telefone: dados.telefone,
     endereco: dados.endereco,
   });
+
+  const observacoesInternas = [
+    dados.observacao,
+    dados.descontoPercent ? `Desconto: ${dados.descontoPercent}%` : null,
+  ].filter(Boolean).join(" | ");
 
   const venda = await blingRequest("POST", "/pedidos/vendas", {
     data: today,
@@ -261,6 +268,7 @@ export async function createVenda(dados: {
       valor: item.valor,
     })),
     transporte: {
+      ...(dados.fretePreco ? { frete: dados.fretePreco, fretePorConta: 0 } : {}),
       enderecoEntrega: {
         endereco: dados.endereco.logradouro,
         numero: dados.endereco.numero,
@@ -276,7 +284,8 @@ export async function createVenda(dados: {
       formaPagamento: "Dinheiro",
       ...(dados.condicaoPagamento ? { condicaoPagamento: dados.condicaoPagamento } : {}),
     },
-    observacao: dados.observacao,
+    observacoes: dados.observacao,
+    observacoesInternas,
   }) as any;
 
   return {
