@@ -1,7 +1,7 @@
 import type { APIRoute } from "astro";
 
 const RESEND_TOKEN = import.meta.env.RESEND_TOKEN ?? "";
-const COMPANY_EMAIL = "host.zaylo@gmail.com";
+const COMPANY_EMAIL = "contato@zaylo.com.br";
 const FROM_EMAIL = "contato@zaylo.com.br";
 const SITE_URL = import.meta.env.SITE_URL ?? "https://zaylo.com.br";
 
@@ -44,7 +44,7 @@ const BASE_STYLE = `
 `;
 
 function wrapHtml(body: string) {
-  return `<!DOCTYPE html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">${BASE_STYLE}</head><body><div class="container"><div class="header"><img src="${SITE_URL}/logos/zaylo-logo.png" alt="Zaylo" style="height:32px;width:auto;display:block;margin:0 auto"></div><div class="content">${body}</div><div class="footer"><p>Zaylo — Todos os direitos reservados</p></div></div></body></html>`;
+  return `<!DOCTYPE html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">${BASE_STYLE}</head><body><div class="container"><div class="header"><img src="https://res.cloudinary.com/dgqjmi3zc/image/upload/v1780866644/zaylo-logo_mdtz2o.png" alt="Zaylo" style="height:32px;width:auto;display:block;margin:0 auto"></div><div class="content">${body}</div><div class="footer"><p>Zaylo — Todos os direitos reservados</p></div></div></body></html>`;
 }
 
 export async function sendConfirmationEmail(params: {
@@ -81,8 +81,9 @@ export async function sendConfirmationEmail(params: {
     <table class="items">
       <thead><tr><th>Produto</th><th style="text-align:center">Qtd</th><th style="text-align:right">Preço</th></tr></thead>
       <tbody>${itemsHtml}</tbody>
-      ${params.descontoValor && params.descontoValor > 0 ? `<tr><td colspan="2" style="padding:8px 12px;font-size:13px;color:#e53e3e">Desconto${params.descontoPercent ? ` (${params.descontoPercent}%)` : ""}</td><td style="padding:8px 12px;font-size:13px;color:#e53e3e;text-align:right">- R$ ${params.descontoValor.toFixed(2)}</td></tr>` : ""}
+      
       ${params.fretePreco ? `<tr><td colspan="2" style="padding:8px 12px;font-size:13px;color:#666">Frete</td><td style="padding:8px 12px;font-size:13px;color:#666;text-align:right">R$ ${params.fretePreco.toFixed(2)}</td></tr>` : ""}
+      ${params.descontoValor && params.descontoValor > 0 ? `<tr><td colspan="2" style="padding:8px 12px;font-size:13px;color:#e53e3e">Desconto${params.descontoPercent ? ` (${params.descontoPercent}%)` : ""}</td><td style="padding:8px 12px;font-size:13px;color:#e53e3e;text-align:right">- R$ ${params.descontoValor.toFixed(2)}</td></tr>` : ""}
       <tr class="total-row"><td colspan="2">Total</td><td>R$ ${params.total.toFixed(2)}</td></tr>
     </table>
 
