@@ -44,6 +44,7 @@ export const POST: APIRoute = async ({ request }) => {
           customerName: nome ?? "Cliente",
           orderId,
           trackingCode,
+          shippingStatus,
         });
         console.log("[ME-Webhook] Tracking email sent to:", email, "| code:", trackingCode);
 

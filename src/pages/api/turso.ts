@@ -149,6 +149,12 @@ export async function setupOrdersTable() {
     )
   `);
   await db().execute("ALTER TABLE orders ADD COLUMN frete_service_id TEXT").catch(() => {});
+  await db().execute("ALTER TABLE orders ADD COLUMN me_order_id TEXT").catch(() => {});
+  await db().execute("ALTER TABLE orders ADD COLUMN tracking_code TEXT").catch(() => {});
+  await db().execute("ALTER TABLE orders ADD COLUMN tracking_email_sent INTEGER NOT NULL DEFAULT 0").catch(() => {});
+  await db().execute("ALTER TABLE orders ADD COLUMN shipping_status TEXT").catch(() => {});
+  await db().execute("ALTER TABLE orders ADD COLUMN shipping_updated_at INTEGER").catch(() => {});
+  await db().execute("ALTER TABLE orders ADD COLUMN payment_id TEXT").catch(() => {});
   await db().execute(`
     CREATE TABLE IF NOT EXISTS order_items (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -176,8 +182,11 @@ export async function saveOrderNormalized(orderId: string, data: any) {
             cep, logradouro, numero, complemento, bairro, cidade, uf,
             total, frete_preco, frete_servico, frete_service_id, condicao_pagamento, observacao,
             cupom, desconto_percent, desconto_valor,
-            email_sent, bling_processed, me_processed, created_at
-          ) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)
+            email_sent, bling_processed, me_processed,
+            me_order_id, tracking_code, tracking_email_sent, shipping_status, shipping_updated_at,
+            payment_id,
+            created_at
+          ) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)
           ON CONFLICT(id) DO UPDATE SET
             nome=excluded.nome, email=excluded.email, cpf_cnpj=excluded.cpf_cnpj,
             telefone=excluded.telefone, cep=excluded.cep, logradouro=excluded.logradouro,
@@ -189,7 +198,11 @@ export async function saveOrderNormalized(orderId: string, data: any) {
             cupom=excluded.cupom, desconto_percent=excluded.desconto_percent,
             desconto_valor=excluded.desconto_valor,
             email_sent=excluded.email_sent, bling_processed=excluded.bling_processed,
-            me_processed=excluded.me_processed`,
+            me_processed=excluded.me_processed,
+            me_order_id=excluded.me_order_id, tracking_code=excluded.tracking_code,
+            tracking_email_sent=excluded.tracking_email_sent, shipping_status=excluded.shipping_status,
+            shipping_updated_at=excluded.shipping_updated_at,
+            payment_id=excluded.payment_id`,
     args: [
       orderId,
       data.nome ?? "", data.email ?? "", data.cpfCnpj ?? null, data.telefone ?? null,
@@ -199,6 +212,9 @@ export async function saveOrderNormalized(orderId: string, data: any) {
       data.condicaoPagamento ?? null, data.observacao ?? null,
       data.cupom ?? null, data.descontoPercent ?? null, data.descontoValor ?? null,
       data.emailSent ?? 0, data.blingProcessed ?? 0, data.meProcessed ?? 0,
+      data.meOrderId ?? null, data.trackingCode ?? null,
+      data.trackingEmailSent ?? 0, data.shippingStatus ?? null, data.shippingUpdatedAt ?? null,
+      data.paymentId ?? null,
       Date.now(),
     ],
   });
@@ -234,6 +250,12 @@ export async function getOrderNormalized(orderId: string) {
     },
     freteSelecionado: { price: row.frete_preco, name: row.frete_servico, serviceId: row.frete_service_id },
     emailSent: row.email_sent, blingProcessed: row.bling_processed, meProcessed: row.me_processed,
+    paymentId: row.payment_id ?? null,
+    meOrderId: row.me_order_id ?? null,
+    trackingCode: row.tracking_code ?? null,
+    trackingEmailSent: !!row.tracking_email_sent,
+    shippingStatus: row.shipping_status ?? null,
+    shippingUpdatedAt: row.shipping_updated_at ?? null,
     itens: items.map(i => ({
       id: i.produto_id, slug: i.slug, titulo: i.titulo,
       quantidade: i.quantidade, preco: i.preco, peso: i.peso,

@@ -168,7 +168,12 @@ export async function sendTrackingEmail(params: {
   customerName: string;
   orderId: string;
   trackingCode: string;
+  shippingStatus?: string;
 }) {
+  const statusHtml = params.shippingStatus
+    ? `<p style="font-size:13px;color:#888;margin-top:8px"><strong>Status:</strong> ${params.shippingStatus}</p>`
+    : "";
+
   const clientHtml = wrapHtml(`
     <h2>Olá, ${params.customerName}!</h2>
     <p>Seu pedido <strong>${params.orderId}</strong> foi postado e está a caminho!</p>
@@ -176,6 +181,7 @@ export async function sendTrackingEmail(params: {
     <div class="tracking-box">
       <p style="font-size:12px;color:#888;text-transform:uppercase;letter-spacing:1px">Código de rastreio</p>
       <p class="tracking-code">${params.trackingCode}</p>
+      ${statusHtml}
     </div>
 
     <p style="margin-top:24px;font-size:13px;color:#888">Equipe Zaylo</p>
@@ -189,6 +195,7 @@ export async function sendTrackingEmail(params: {
     <div class="tracking-box">
       <p style="font-size:12px;color:#888;text-transform:uppercase;letter-spacing:1px">Código de rastreio</p>
       <p class="tracking-code">${params.trackingCode}</p>
+      ${statusHtml}
     </div>
   `);
 

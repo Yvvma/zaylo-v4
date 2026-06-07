@@ -1,30 +1,12 @@
 import type { APIRoute } from "astro";
-import { sendConfirmationEmail, sendAlertEmail } from "./resend";
+import { sendConfirmationEmail, sendAlertEmail, sendTrackingEmail } from "./resend";
 import { getOrderNormalized, saveOrderNormalized, setupOrdersTable } from "./turso";
-import { addToCart, checkout, generate } from "./melhor-envio-auth";
+import { searchOrder, tracking } from "./melhor-envio-auth";
 import { createVenda } from "./bling-auth";
 import { buscarBlingId } from "../../data/bling-produtos";
-import { calculatePackageDimensions } from "../../data/products";
 import { setupMETokensTable, setupBlingTokensTable } from "./turso";
 
 const ASAAS_WEBHOOK_SECRET = import.meta.env.ASAAS_WEBHOOK_SECRET ?? "";
-const ME_DOC = (import.meta.env.ME_FROM_DOCUMENT ?? "").replace(/\D/g, "");
-const ME_FROM = {
-  name: import.meta.env.ME_FROM_NAME ?? "Zaylo",
-  email: import.meta.env.ME_FROM_EMAIL ?? "",
-  phone: import.meta.env.ME_FROM_PHONE ?? "",
-  document: ME_DOC.length <= 11 ? ME_DOC : "",
-  company_document: ME_DOC.length === 14 ? ME_DOC : "",
-  state_register: import.meta.env.ME_FROM_STATE_REGISTER ?? "ISENTO",
-  address: import.meta.env.ME_FROM_ADDRESS ?? "",
-  number: import.meta.env.ME_FROM_NUMBER ?? "",
-  complement: import.meta.env.ME_FROM_COMPLEMENT ?? "",
-  district: import.meta.env.ME_FROM_DISTRICT ?? "",
-  city: import.meta.env.ME_FROM_CITY ?? "",
-  state_abbr: import.meta.env.ME_FROM_STATE ?? "",
-  country_id: "BR",
-  postal_code: import.meta.env.ME_FROM_CEP?.replace(/\D/g, "") ?? "",
-};
 
 export const POST: APIRoute = async ({ request }) => {
   try {
@@ -62,7 +44,7 @@ export const POST: APIRoute = async ({ request }) => {
     const emailSent = !!orderMeta.emailSent;
     const blingProcessed = !!orderMeta.blingProcessed;
     const meProcessed = !!orderMeta.meProcessed;
-    const existingMeOrderId = null;
+    const paymentIdSaved = orderMeta.paymentId ?? null;
 
     const {
       nome = "Cliente",
@@ -78,6 +60,12 @@ export const POST: APIRoute = async ({ request }) => {
       descontoPercent = 0,
       descontoValor = 0,
     } = orderMeta;
+
+    // Save payment.id for deduplication
+    if (!paymentIdSaved) {
+      const latest = await getOrderNormalized(orderId) ?? orderMeta;
+      await saveOrderNormalized(orderId, { ...latest, paymentId: payment.id });
+    }
 
     // If order already fully processed, skip everything immediately
     if (blingProcessed && meProcessed) {
@@ -178,83 +166,63 @@ export const POST: APIRoute = async ({ request }) => {
       console.log("[Webhook] Bling já processado ou sem dados — pulando");
     }
 
-    // ─── 3. Melhor Envio label ─────────────────────────────────────────────
-    let meOrderId: string | null = existingMeOrderId;
+    let meOrderId: string | null = null;
+
+    // ─── 3. Melhor Envio — check existing label (não gerar duplicidade) ──
     if (!meProcessed && isBlingProcessed && freteSelecionado?.serviceId && endereco?.cep) {
       try {
-        if (!meOrderId) {
-          const insuranceValue = itens.reduce((s: number, i: any) => s + i.preco * i.quantidade, 0);
-          const totalWeight = Math.max(
-            itens.reduce((s: number, i: any) => s + (i.peso ?? 0.3) * i.quantidade, 0),
-            0.1
-          );
-          const pkg = calculatePackageDimensions(itens.map((i: any) => ({
-            slug: i.slug, selectedSize: i.tamanhoSelecionado, quantity: i.quantidade,
-          })));
+        const searchResult = await searchOrder(orderId);
+        const orders = Array.isArray(searchResult) ? searchResult : [];
+        const meOrder = orders.find((o: any) => {
+          const tags = o.tags ?? [];
+          return tags.some((t: any) => t.tag === orderId);
+        });
 
-          const cartItem = await addToCart({
-            service: parseInt(freteSelecionado.serviceId),
-            from: ME_FROM,
-            to: {
-              name: nome,
-              email: email,
-              phone: telefone.replace(/\D/g, ""),
-              document: cpfCnpj.length <= 11 ? cpfCnpj : "",
-              company_document: cpfCnpj.length === 14 ? cpfCnpj : "",
-              state_register: "ISENTO",
-              address: endereco.logradouro,
-              number: endereco.numero,
-              complement: endereco.complemento ?? "",
-              district: endereco.bairro ?? "",
-              city: endereco.cidade,
-              state_abbr: endereco.uf,
-              country_id: "BR",
-              postal_code: endereco.cep.replace(/\D/g, ""),
-            },
-            products: itens.map((i: any) => ({
-              name: i.titulo,
-              quantity: String(i.quantidade),
-              unitary_value: String(i.preco),
-            })),
-            volumes: [{
-              height: pkg.height,
-              width: pkg.width,
-              length: pkg.length,
-              weight: totalWeight,
-            }],
-            options: {
-              insurance_value: insuranceValue,
-              receipt: false,
-              own_hand: false,
-              reverse: false,
-              non_commercial: true,
-              platform: "Zaylo Shop",
-              tags: [{ tag: orderId }],
-            },
-          });
+        if (meOrder) {
+          meOrderId = meOrder.id;
+          let trackingCode: string | null = meOrder.tracking ?? null;
+          let shippingStatus: string | null = meOrder.status ?? null;
 
-          meOrderId = cartItem?.id;
-          console.log("[ME] Cart:", meOrderId);
-
-          if (meOrderId) {
-            const latest = await getOrderNormalized(orderId) ?? orderMeta;
-            await saveOrderNormalized(orderId, { ...latest, meOrderId });
+          try {
+            const trackingResult = await tracking([meOrderId]);
+            const trackingData = Array.isArray(trackingResult) ? trackingResult[0] : trackingResult;
+            if (trackingData?.tracking) trackingCode = trackingData.tracking;
+            if (trackingData?.status) shippingStatus = trackingData.status;
+          } catch {
+            // tracking call is optional — use data from search result
           }
-        }
-
-        if (meOrderId) {
-          await checkout([meOrderId]);
-          console.log("[ME] Checkout:", meOrderId);
-
-          await generate([meOrderId]);
-          console.log("[ME] Generated:", meOrderId);
 
           const latest = await getOrderNormalized(orderId) ?? orderMeta;
-          await saveOrderNormalized(orderId, { ...latest, meOrderId, meProcessed: 1 });
-          console.log("[Webhook] ME processado e salvo no Turso");
+          await saveOrderNormalized(orderId, {
+            ...latest,
+            meOrderId,
+            meProcessed: 1,
+            trackingCode,
+            shippingStatus,
+            shippingUpdatedAt: Date.now(),
+          });
+          console.log("[Webhook] ME etiqueta encontrada — tracking:", trackingCode, "| status:", shippingStatus);
+
+          if (trackingCode && email && !orderMeta.trackingEmailSent) {
+            await sendTrackingEmail({
+              customerEmail: email,
+              customerName: nome,
+              orderId,
+              trackingCode,
+              shippingStatus,
+            });
+            const latest2 = await getOrderNormalized(orderId) ?? orderMeta;
+            await saveOrderNormalized(orderId, {
+              ...latest2,
+              trackingEmailSent: 1,
+            });
+            console.log("[Webhook] Tracking email enviado para:", email);
+          }
+        } else {
+          console.log("[Webhook] Nenhuma etiqueta encontrada no Melhor Envio para:", orderId);
         }
       } catch (e) {
-        console.error("[ME] Erro ao gerar etiqueta:", e);
+        console.error("[ME] Erro ao consultar etiqueta:", e);
       }
     } else {
       console.log("[Webhook] ME já processado ou Bling pendente — pulando");
