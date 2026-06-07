@@ -2,7 +2,8 @@ import type { APIRoute } from "astro";
 import { getMEToken } from "./melhor-envio-auth";
 
 const ME_BASE = "https://melhorenvio.com.br/api/v2/me";
-const USER_AGENT = "Zaylo Shop (host.zaylo@gmail.com)";
+const USER_AGENT = "Zaylo Shop (contato@zaylo.com.br)";
+const ME_ORIGIN_CEP = (import.meta.env.ME_FROM_CEP ?? "").replace(/\D/g, "");
 
 export const POST: APIRoute = async ({ request }) => {
   try {
@@ -22,7 +23,11 @@ export const POST: APIRoute = async ({ request }) => {
         "User-Agent": USER_AGENT,
         Accept: "application/json",
       },
-      body: JSON.stringify({ from, to, products }),
+      body: JSON.stringify({
+        from: { postal_code: ME_ORIGIN_CEP },
+        to,
+        products,
+      }),
     });
 
     const data = await res.json().catch(() => ({}));

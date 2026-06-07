@@ -83,6 +83,12 @@ export async function getBlingAccessToken(): Promise<string> {
   return data.access_token as string;
 }
 
+function formatarDoc(num: string): string {
+  if (num.length === 11) return num.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, "$1.$2.$3-$4");
+  if (num.length === 14) return num.replace(/(\d{2})(\d{3})(\d{3})(\d{4})(\d{2})/, "$1.$2.$3/$4-$5");
+  return num;
+}
+
 // ─── Contato: busca por CPF/CNPJ ou cria, retorna id ─────────────────────────
 
 async function upsertContato(dados: {
@@ -103,34 +109,48 @@ async function upsertContato(dados: {
   const cpf = dados.cpfCnpj.replace(/\D/g, "");
   const tipoPessoa = cpf.length === 14 ? "J" : "F";
 
-  function formatarDoc(num: string): string {
-    if (num.length === 11) return num.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, "$1.$2.$3-$4");
-    if (num.length === 14) return num.replace(/(\d{2})(\d{3})(\d{3})(\d{4})(\d{2})/, "$1.$2.$3/$4-$5");
-    return num;
-  }
-
   async function buscarPorDoc(numero: string): Promise<number | null> {
     const formatado = formatarDoc(numero);
-    try {
-      const search = await blingRequest("GET", `/contatos?numeroDocumento=${encodeURIComponent(formatado)}`) as any;
-      const found = search?.data?.[0];
-      if (found?.id) {
-        const foundDoc = (found.numeroDocumento ?? "").replace(/\D/g, "");
-        if (foundDoc === numero) {
-          console.log("[Bling] Contato encontrado por documento:", found.id);
-          return found.id as number;
+    // Tenta buscar com formato primeiro
+    for (const busca of [formatado, numero]) {
+      try {
+        const search = await blingRequest("GET", `/contatos?numeroDocumento=${encodeURIComponent(busca)}`) as any;
+        const found = search?.data?.[0];
+        if (found?.id) {
+          const foundDoc = (found.numeroDocumento ?? "").replace(/\D/g, "");
+          if (foundDoc === numero) {
+            console.log("[Bling] Contato encontrado por documento:", found.id);
+            return found.id as number;
+          }
         }
+      } catch (e) {
+        console.warn(`[Bling] Busca por documento "${busca}" falhou:`, e);
       }
-    } catch (e) {
-      console.warn("[Bling] Busca por documento falhou:", e);
     }
     return null;
   }
 
-  // Tenta buscar por documento (sem formatação e formatado)
+  // Tenta buscar por documento (formato e sem formato)
   if (cpf) {
     const idEncontrado = await buscarPorDoc(cpf);
     if (idEncontrado) return idEncontrado;
+  }
+
+  // Tenta buscar por email
+  if (dados.email) {
+    try {
+      const search = await blingRequest("GET", `/contatos?email=${encodeURIComponent(dados.email)}`) as any;
+      const found = search?.data?.[0];
+      if (found?.id) {
+        const foundDoc = (found.numeroDocumento ?? "").replace(/\D/g, "");
+        if (!cpf || foundDoc === cpf) {
+          console.log("[Bling] Contato encontrado por email:", found.id);
+          return found.id as number;
+        }
+      }
+    } catch (e) {
+      console.warn("[Bling] Busca por email falhou:", e);
+    }
   }
 
   // Se não achou, tenta criar
@@ -153,6 +173,8 @@ async function upsertContato(dados: {
       tipo: tipoPessoa,
       situacao: "A",
       cliente: true,
+      fornecedor: false,
+      consumidorFinal: true,
       telefone: dados.telefone?.replace(/\D/g, "") || undefined,
       endereco: addressObj ? {
         geral: addressObj,
@@ -168,24 +190,24 @@ async function upsertContato(dados: {
   } catch (e: any) {
     console.warn("[Bling] Criação de contato falhou:", e?.message);
     const msg = e?.message ?? "";
-    // CPF já cadastrado → buscar pelo documento novamente, validando o match
-    if (msg.includes("CPF já está cadastrado") && cpf) {
-      console.log("[Bling] CPF já existe, buscando por documento:", cpf);
+    // CPF já cadastrado → buscar pelo documento novamente
+    if ((msg.includes("CPF") || msg.includes("documento")) && cpf) {
+      console.log("[Bling] Documento já existe, buscando...");
       const idEncontrado = await buscarPorDoc(cpf);
       if (idEncontrado) return idEncontrado;
 
-      // Fallback: busca por nome do request, mas valida documento
-      console.log("[Bling] Busca por documento falhou no fallback, tentando por nome:", dados.nome);
+      // Fallback: busca por nome, valida documento
+      console.log("[Bling] Busca por documento falhou, tentando por nome:", dados.nome);
       try {
         const search = await blingRequest("GET", `/contatos?nome=${encodeURIComponent(dados.nome)}`) as any;
-        const found = search?.data?.[0];
-        if (found?.id) {
-          const foundDoc = (found.numeroDocumento ?? "").replace(/\D/g, "");
-          if (foundDoc === cpf) {
-            console.log("[Bling] Contato validado por nome+documento:", found.id);
-            return found.id as number;
+        for (const found of (search?.data ?? [])) {
+          if (found?.id) {
+            const foundDoc = (found.numeroDocumento ?? "").replace(/\D/g, "");
+            if (foundDoc === cpf) {
+              console.log("[Bling] Contato validado por nome+documento:", found.id);
+              return found.id as number;
+            }
           }
-          console.warn("[Bling] Contato encontrado por nome mas documento não confere, ignorando");
         }
       } catch (e2) {
         console.warn("[Bling] Busca por nome falhou:", e2);
@@ -193,6 +215,7 @@ async function upsertContato(dados: {
     }
   }
 
+  console.error("[Bling] Não foi possível encontrar ou criar contato para CPF:", cpf);
   return null;
 }
 
@@ -240,19 +263,32 @@ export async function createVenda(dados: {
       : {
           nome: dados.nome,
           email: dados.email,
-          numeroDocumento: dados.cpfCnpj.replace(/\D/g, ""),
+          numeroDocumento: formatarDoc(dados.cpfCnpj.replace(/\D/g, "")),
           tipo: dados.cpfCnpj.replace(/\D/g, "").length === 14 ? "J" : "F",
           situacao: "A",
           cliente: true,
+          fornecedor: false,
+          consumidorFinal: true,
           telefone,
           endereco: {
-            endereco: dados.endereco.logradouro,
-            numero: dados.endereco.numero,
-            complemento: dados.endereco.complemento ?? "",
-            bairro: dados.endereco.bairro ?? "",
-            municipio: dados.endereco.cidade,
-            uf: dados.endereco.uf,
-            cep: dados.endereco.cep.replace(/\D/g, ""),
+            geral: {
+              endereco: dados.endereco.logradouro,
+              numero: dados.endereco.numero,
+              complemento: dados.endereco.complemento ?? "",
+              bairro: dados.endereco.bairro ?? "",
+              municipio: dados.endereco.cidade,
+              uf: dados.endereco.uf,
+              cep: dados.endereco.cep.replace(/\D/g, ""),
+            },
+            cobranca: {
+              endereco: dados.endereco.logradouro,
+              numero: dados.endereco.numero,
+              complemento: dados.endereco.complemento ?? "",
+              bairro: dados.endereco.bairro ?? "",
+              municipio: dados.endereco.cidade,
+              uf: dados.endereco.uf,
+              cep: dados.endereco.cep.replace(/\D/g, ""),
+            },
           },
         },
     itens: dados.itens.map((item) => ({

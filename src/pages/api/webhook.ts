@@ -8,16 +8,17 @@ import { calculatePackageDimensions } from "../../data/products";
 import { setupMETokensTable, setupBlingTokensTable } from "./turso";
 
 const ASAAS_WEBHOOK_SECRET = import.meta.env.ASAAS_WEBHOOK_SECRET ?? "";
-const ME_CNPJ = (import.meta.env.ME_FROM_CNPJ ?? "").replace(/\D/g, "");
+const ME_DOC = (import.meta.env.ME_FROM_DOCUMENT ?? "").replace(/\D/g, "");
 const ME_FROM = {
   name: import.meta.env.ME_FROM_NAME ?? "Zaylo",
   email: import.meta.env.ME_FROM_EMAIL ?? "",
   phone: import.meta.env.ME_FROM_PHONE ?? "",
-  document: "",
-  company_document: ME_CNPJ,
+  document: ME_DOC.length <= 11 ? ME_DOC : "",
+  company_document: ME_DOC.length === 14 ? ME_DOC : "",
   state_register: import.meta.env.ME_FROM_STATE_REGISTER ?? "ISENTO",
   address: import.meta.env.ME_FROM_ADDRESS ?? "",
   number: import.meta.env.ME_FROM_NUMBER ?? "",
+  complement: import.meta.env.ME_FROM_COMPLEMENT ?? "",
   district: import.meta.env.ME_FROM_DISTRICT ?? "",
   city: import.meta.env.ME_FROM_CITY ?? "",
   state_abbr: import.meta.env.ME_FROM_STATE ?? "",
