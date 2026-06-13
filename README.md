@@ -256,3 +256,27 @@ npm run preview  # Preview local do build
 - **Stripe**: dependência presente em `package.json` mas não utilizada no código
 - **ContentPageWrapper**: referência a `.module.css` que não existe (usa Tailwind inline)
 - **CartContext**: fallback síncrono global permite acesso ao carrinho fora da árvore React (necessário para `checkout.astro` e `success.astro`)
+
+
+[Influencer] Error: LibsqlError: SQLITE_UNKNOWN: SQLite error: 32 values for 31 columns
+    at mapHranaError (file:///var/task/node_modules/@libsql/client/lib-esm/hrana.js:310:16)
+    at file:///var/task/node_modules/@libsql/client/lib-esm/http.js:86:23
+    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+    at async saveOrderNormalized (file:///var/task/dist/server/chunks/turso_Dq3MzQyF.mjs:154:3)
+    at async Module.POST (file:///var/task/dist/server/pages/api/influencer-order.astro.mjs:30:5)
+    at async renderEndpoint (file:///var/task/dist/server/chunks/astro/server_gAje09mE.mjs:511:18)
+    at async lastNext (file:///var/task/dist/server/chunks/_@astrojs-ssr-adapter_CmsoVBw0.mjs:2650:23)
+    at async callMiddleware (file:///var/task/dist/server/chunks/_@astrojs-ssr-adapter_CmsoVBw0.mjs:1274:10)
+    at async RenderContext.render (file:///var/task/dist/server/chunks/_@astrojs-ssr-adapter_CmsoVBw0.mjs:2697:22)
+    at async NodeApp.render (file:///var/task/dist/server/chunks/_@astrojs-ssr-adapter_CmsoVBw0.mjs:3653:18) {
+  code: 'SQLITE_UNKNOWN',
+  extendedCode: undefined,
+  rawCode: undefined,
+  [cause]: [ResponseError: SQLite error: 32 values for 31 columns] {
+    code: 'SQLITE_UNKNOWN',
+    proto: {
+      message: 'SQLite error: 32 values for 31 columns',
+      code: 'SQLITE_UNKNOWN'
+    }
+  }
+}
