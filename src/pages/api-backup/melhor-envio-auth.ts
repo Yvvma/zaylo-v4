@@ -9,6 +9,23 @@ const ME_AUTH_URL = "https://melhorenvio.com.br/oauth/authorize";
 export const ME_BASE = "https://melhorenvio.com.br/api/v2/me";
 export const USER_AGENT = "Zaylo Shop (contato@zaylo.com.br)";
 
+export async function meRequest(method: string, path: string, body?: unknown) {
+  const token = await getMEToken();
+  const res = await fetch(`${ME_BASE}${path}`, {
+    method,
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+      "User-Agent": USER_AGENT,
+      Accept: "application/json",
+    },
+    body: body ? JSON.stringify(body) : undefined,
+  });
+  const data = await res.json().catch(() => ({}));
+  if (!res.ok) throw new Error(JSON.stringify(data));
+  return data;
+}
+
 export async function getMEToken(): Promise<string> {
   await setupMETokensTable();
   const tokens = await getMETokens();
@@ -51,6 +68,57 @@ export async function getMEToken(): Promise<string> {
   console.log("[ME] Token refreshed and saved to Turso");
   return data.access_token as string;
 }
+
+// ─── Melhor Envio API endpoints ────────────────────────────────────────────────
+
+export async function addToCart(params: {
+  service: number;
+  from: Record<string, any>;
+  to: Record<string, any>;
+  products: Array<{ name: string; quantity: string; unitary_value: string }>;
+  volumes: Array<{ height: number; width: number; length: number; weight: number }>;
+  options: Record<string, any>;
+}) {
+  return meRequest("POST", "/cart", params);
+}
+
+export async function checkout(orders: string[]) {
+  return meRequest("POST", "/shipment/checkout", { orders });
+}
+
+export async function generate(orders: string[]) {
+  return meRequest("POST", "/shipment/generate", { orders });
+}
+
+export async function searchOrder(query: string) {
+  const token = await getMEToken();
+  const res = await fetch(`${ME_BASE}/orders/search?q=${encodeURIComponent(query)}`, {
+    method: "GET",
+    headers: {
+      Authorization: `Bearer ${token}`,
+      "User-Agent": USER_AGENT,
+      Accept: "application/json",
+    },
+  });
+  return res.json().catch(() => ({}));
+}
+
+export async function tracking(orders: string[]) {
+  const token = await getMEToken();
+  const res = await fetch(`${ME_BASE}/shipment/tracking`, {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${token}`,
+      "User-Agent": USER_AGENT,
+      "Content-Type": "application/json",
+      Accept: "application/json",
+    },
+    body: JSON.stringify({ orders }),
+  });
+  return res.json().catch(() => ({}));
+}
+
+
 
 // GET /api/melhor-envio-auth         → redirects to ME authorization page
 

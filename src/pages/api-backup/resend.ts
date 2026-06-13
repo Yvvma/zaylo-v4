@@ -146,7 +146,7 @@ export async function sendInfluencerAlertEmail(params: {
       <thead><tr><th>Produto</th><th style="text-align:center">Qtd</th><th style="text-align:right">Preço</th></tr></thead>
       <tbody>${itemsHtml}</tbody>
     </table>
-    <p style="font-size:13px;color:#888;font-style:italic">Pedido gratuito — processado automaticamente no Bling.</p>
+    <p style="font-size:13px;color:#888;font-style:italic">Pedido gratuito — processado automaticamente no Bling e Melhor Envio.</p>
   `);
 
   await sendEmail(COMPANY_EMAIL, `🌟 Influencer — Pedido ${params.orderId} | ZAYLO`, html, "Zaylo");
@@ -163,10 +163,56 @@ export async function sendAlertEmail(orderId: string, customerEmail: string, cus
   await sendEmail(COMPANY_EMAIL, `Falha no e-mail — Pedido ${orderId} | ZAYLO`, html, `Pedido ${orderId} | Zaylo`);
 }
 
+export async function sendTrackingEmail(params: {
+  customerEmail: string;
+  customerName: string;
+  orderId: string;
+  trackingCode: string;
+  shippingStatus?: string;
+}) {
+  const statusHtml = params.shippingStatus
+    ? `<p style="font-size:13px;color:#888;margin-top:8px"><strong>Status:</strong> ${params.shippingStatus}</p>`
+    : "";
+
+  const clientHtml = wrapHtml(`
+    <h2>Olá, ${params.customerName}!</h2>
+    <p>Seu pedido <strong>${params.orderId}</strong> foi postado e está a caminho!</p>
+
+    <div class="tracking-box">
+      <p style="font-size:12px;color:#888;text-transform:uppercase;letter-spacing:1px">Código de rastreio</p>
+      <p class="tracking-code">${params.trackingCode}</p>
+      ${statusHtml}
+    </div>
+
+    <p style="margin-top:24px;font-size:13px;color:#888">Equipe Zaylo</p>
+  `);
+
+  const companyHtml = wrapHtml(`
+    <h2>Etiqueta postada</h2>
+    <p><strong>Pedido:</strong> ${params.orderId}<br>
+    <strong>Cliente:</strong> ${params.customerName} (${params.customerEmail})</p>
+
+    <div class="tracking-box">
+      <p style="font-size:12px;color:#888;text-transform:uppercase;letter-spacing:1px">Código de rastreio</p>
+      <p class="tracking-code">${params.trackingCode}</p>
+      ${statusHtml}
+    </div>
+  `);
+
+  await Promise.all([
+    sendEmail(params.customerEmail, `Pedido ${params.orderId} — código de rastreio | ZAYLO`, clientHtml, "Zaylo"),
+    sendEmail(COMPANY_EMAIL, `Etiqueta postada — Pedido ${params.orderId} | ZAYLO`, companyHtml, `Pedido ${params.orderId} | Zaylo`),
+  ]);
+}
+
 export const POST: APIRoute = async ({ request }) => {
   try {
     const body = await request.json();
-    await sendConfirmationEmail(body);
+    if (body.type === "tracking") {
+      await sendTrackingEmail(body);
+    } else {
+      await sendConfirmationEmail(body);
+    }
     return new Response(JSON.stringify({ ok: true }), { status: 200 });
   } catch (error: any) {
     console.error("Resend error:", error);
