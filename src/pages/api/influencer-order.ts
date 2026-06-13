@@ -2,6 +2,7 @@ import type { APIRoute } from "astro";
 import { saveOrderNormalized, setupOrdersTable, setupBlingTokensTable } from "./turso";
 import { createVenda } from "./bling-auth";
 import { buscarBlingId } from "../../data/bling-produtos";
+import { getShippingSpecs, calculatePackageDimensions } from "../../data/products";
 import { sendConfirmationEmail, sendInfluencerAlertEmail } from "./resend";
 
 export const POST: APIRoute = async ({ request }) => {
@@ -59,12 +60,25 @@ export const POST: APIRoute = async ({ request }) => {
     // 2. Bling
     let blingProcessed = 0;
     try {
+      const itensComSpecs = itens.map((i: any) => {
+        const specs = getShippingSpecs(i.slug, i.tamanhoSelecionado);
+        return { ...i, specs };
+      });
+      const pesoBruto = itensComSpecs.reduce((s: number, i: any) => s + i.specs.weight * i.quantidade, 0);
+      const pkg = calculatePackageDimensions(itensComSpecs.map((i: any) => ({
+        slug: i.slug, selectedSize: i.tamanhoSelecionado, quantity: i.quantidade,
+      })));
+
       await createVenda({
         nome, email, cpfCnpj, telefone,
-        itens: itens.map((i: any) => ({
+        itens: itensComSpecs.map((i: any) => ({
           blingId: buscarBlingId(i.slug, i.corVarianteSelecionada, i.tamanhoSelecionado) ?? i.blingId ?? i.id,
           quantidade: i.quantidade,
           valor: i.preco,
+          peso: i.specs.weight,
+          altura: i.specs.height,
+          largura: i.specs.width,
+          comprimento: i.specs.length,
         })),
         total: 0,
         endereco: {
@@ -73,9 +87,12 @@ export const POST: APIRoute = async ({ request }) => {
         },
         condicaoPagamento,
         observacao,
-        descontoValor, // 100% de desconto = valor integral
+        descontoValor,
         descontoPercent: 100,
         fretePreco: freteSelecionado?.price ?? 0,
+        pesoBruto,
+        quantidadeVolumes: 1,
+        volumes: [{ peso: pesoBruto, altura: pkg.height, largura: pkg.width, comprimento: pkg.length }],
       });
       blingProcessed = 1;
       await saveOrderNormalized(orderId, { ...orderData, observacao, emailSent: 1, blingProcessed: 1 });

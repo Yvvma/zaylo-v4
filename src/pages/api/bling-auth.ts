@@ -2,6 +2,7 @@ import type { APIRoute } from "astro";
 import { setupBlingTokensTable, saveBlingTokens, getBlingTokens } from "./turso";
 import { getOrder } from "./order-store";
 import { buscarBlingId } from "../../data/bling-produtos";
+import { getShippingSpecs, calculatePackageDimensions } from "../../data/products";
 
 const BLING_BASIC_AUTH = import.meta.env.BLING_BASIC_AUTH ?? "";
 const BLING_TOKEN_URL = "https://www.bling.com.br/Api/v3/oauth/token";
@@ -226,7 +227,7 @@ export async function createVenda(dados: {
   email: string;
   cpfCnpj: string;
   telefone?: string;
-  itens: Array<{ blingId: number; quantidade: number; valor: number }>;
+  itens: Array<{ blingId: number; quantidade: number; valor: number; peso?: number; altura?: number; largura?: number; comprimento?: number }>;
   total: number;
   endereco: {
     cep: string;
@@ -242,6 +243,10 @@ export async function createVenda(dados: {
   descontoValor?: number;
   descontoPercent?: number;
   fretePreco?: number;
+  pesoBruto?: number;
+  quantidadeVolumes?: number;
+  volumes?: Array<{ peso?: number; altura?: number; largura?: number; comprimento?: number }>;
+  prazoEntrega?: number;
 }) {
   const today = new Date().toISOString().split("T")[0];
   const telefone = dados.telefone?.replace(/\D/g, "") || undefined;
@@ -295,8 +300,17 @@ export async function createVenda(dados: {
       produto: { id: item.blingId },
       quantidade: item.quantidade,
       valor: item.valor,
+      ...(item.peso ? { peso: item.peso } : {}),
+      ...(item.altura ? { altura: item.altura } : {}),
+      ...(item.largura ? { largura: item.largura } : {}),
+      ...(item.comprimento ? { comprimento: item.comprimento } : {}),
     })),
     transporte: {
+      fretePorConta: 0,
+      frete: dados.fretePreco ?? 0,
+      quantidadeVolumes: dados.quantidadeVolumes ?? 1,
+      pesoBruto: dados.pesoBruto ?? 0,
+      ...(dados.prazoEntrega ? { prazoEntrega: dados.prazoEntrega } : {}),
       enderecoEntrega: {
         endereco: dados.endereco.logradouro,
         numero: dados.endereco.numero,
@@ -306,6 +320,24 @@ export async function createVenda(dados: {
         municipio: dados.endereco.cidade,
         uf: dados.endereco.uf,
       },
+      etiqueta: {
+        nome: dados.nome,
+        endereco: dados.endereco.logradouro,
+        numero: dados.endereco.numero,
+        complemento: dados.endereco.complemento ?? "",
+        bairro: dados.endereco.bairro ?? "",
+        municipio: dados.endereco.cidade,
+        uf: dados.endereco.uf,
+        cep: dados.endereco.cep.replace(/\D/g, ""),
+        nomePais: "BRASIL",
+      },
+      volumes: (dados.volumes ?? []).map((v, i) => ({
+        id: i + 1,
+        ...(v.peso ? { peso: v.peso } : {}),
+        ...(v.altura ? { altura: v.altura } : {}),
+        ...(v.largura ? { largura: v.largura } : {}),
+        ...(v.comprimento ? { comprimento: v.comprimento } : {}),
+      })),
     },
     ...(dados.descontoValor ? { desconto: { valor: dados.descontoValor, unidade: "R$" } } : {}),
     pagamento: {
@@ -317,11 +349,6 @@ export async function createVenda(dados: {
       dados.descontoPercent ? `Desconto: ${dados.descontoPercent}%` : null,
     ].filter(Boolean).join(" | "),
   };
-
-  if (dados.fretePreco) {
-    payload.transporte.frete = dados.fretePreco;
-    payload.transporte.fretePorConta = 0;
-  }
 
   const venda = await blingRequest("POST", "/pedidos/vendas", payload) as any;
   console.log("[Bling] Resposta completa da venda:", JSON.stringify(venda).slice(0, 500));
@@ -409,15 +436,28 @@ export const POST: APIRoute = async ({ request }) => {
             endereco = {},
           } = orderMeta;
 
+          const itensComSpecs = itens.map((i: any) => {
+            const specs = getShippingSpecs(i.slug, i.tamanhoSelecionado);
+            return { ...i, specs };
+          });
+          const pesoBruto = itensComSpecs.reduce((s: number, i: any) => s + i.specs.weight * i.quantidade, 0);
+          const pkg = calculatePackageDimensions(itensComSpecs.map((i: any) => ({
+            slug: i.slug, selectedSize: i.tamanhoSelecionado, quantity: i.quantidade,
+          })));
+
           vendaData = {
             nome,
             email,
             cpfCnpj,
             telefone,
-            itens: itens.map((i: any) => ({
+            itens: itensComSpecs.map((i: any) => ({
               blingId: buscarBlingId(i.slug, i.corVarianteSelecionada, i.tamanhoSelecionado) ?? i.blingId ?? i.produtoId ?? i.id,
               quantidade: i.quantidade,
               valor: i.preco,
+              peso: i.specs.weight,
+              altura: i.specs.height,
+              largura: i.specs.width,
+              comprimento: i.specs.length,
             })),
             total,
             endereco: {
@@ -429,6 +469,9 @@ export const POST: APIRoute = async ({ request }) => {
               cidade: endereco.cidade,
               uf: endereco.uf,
             },
+            pesoBruto,
+            quantidadeVolumes: 1,
+            volumes: [{ peso: pesoBruto, altura: pkg.height, largura: pkg.width, comprimento: pkg.length }],
           };
         }
 

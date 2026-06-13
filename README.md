@@ -258,25 +258,115 @@ npm run preview  # Preview local do build
 - **CartContext**: fallback síncrono global permite acesso ao carrinho fora da árvore React (necessário para `checkout.astro` e `success.astro`)
 
 
-[Influencer] Error: LibsqlError: SQLITE_UNKNOWN: SQLite error: 32 values for 31 columns
-    at mapHranaError (file:///var/task/node_modules/@libsql/client/lib-esm/hrana.js:310:16)
-    at file:///var/task/node_modules/@libsql/client/lib-esm/http.js:86:23
-    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
-    at async saveOrderNormalized (file:///var/task/dist/server/chunks/turso_Dq3MzQyF.mjs:154:3)
-    at async Module.POST (file:///var/task/dist/server/pages/api/influencer-order.astro.mjs:30:5)
-    at async renderEndpoint (file:///var/task/dist/server/chunks/astro/server_gAje09mE.mjs:511:18)
-    at async lastNext (file:///var/task/dist/server/chunks/_@astrojs-ssr-adapter_CmsoVBw0.mjs:2650:23)
-    at async callMiddleware (file:///var/task/dist/server/chunks/_@astrojs-ssr-adapter_CmsoVBw0.mjs:1274:10)
-    at async RenderContext.render (file:///var/task/dist/server/chunks/_@astrojs-ssr-adapter_CmsoVBw0.mjs:2697:22)
-    at async NodeApp.render (file:///var/task/dist/server/chunks/_@astrojs-ssr-adapter_CmsoVBw0.mjs:3653:18) {
-  code: 'SQLITE_UNKNOWN',
-  extendedCode: undefined,
-  rawCode: undefined,
-  [cause]: [ResponseError: SQLite error: 32 values for 31 columns] {
-    code: 'SQLITE_UNKNOWN',
-    proto: {
-      message: 'SQLite error: 32 values for 31 columns',
-      code: 'SQLITE_UNKNOWN'
+{
+  "numero": 123,
+  "numeroLoja": "Loja_123",
+  "data": "2023-01-12",
+  "dataSaida": "2023-01-12",
+  "dataPrevista": "2023-01-12",
+  "contato": {
+    "id": 12345678,
+    "tipoPessoa": "J",
+    "numeroDocumento": "30188025000121"
+  },
+  "situacao": {
+    "id": 12345678
+  },
+  "loja": {
+    "id": 12345678,
+    "unidadeNegocio": {
+      "id": 12345678
     }
+  },
+  "numeroPedidoCompra": "123",
+  "outrasDespesas": 2,
+  "observacoes": "Observações do pedido.",
+  "observacoesInternas": "Observações internas do pedido.",
+  "desconto": {
+    "valor": 15.45,
+    "unidade": "REAL"
+  },
+  "categoria": {
+    "id": 12345678
+  },
+  "tributacao": {
+    "totalICMS": 5.55,
+    "totalIPI": 5.55
+  },
+  "itens": [
+    {
+      "codigo": "BLG-5",
+      "unidade": "UN",
+      "quantidade": 1,
+      "desconto": 2,
+      "valor": 4.9,
+      "aliquotaIPI": 0,
+      "descricao": "Produto do Bling",
+      "descricaoDetalhada": "Brinde",
+      "produto": {
+        "id": 12345678
+      },
+      "comissao": {
+        "base": 10,
+        "aliquota": 2,
+        "valor": 0.2
+      },
+      "naturezaOperacao": {
+        "id": 12345678
+      }
+    }
+  ],
+  "parcelas": [
+    {
+      "id": 12345678,
+      "dataVencimento": "2023-01-12",
+      "valor": 123.45,
+      "observacoes": "Observação da parcela",
+      "caut": "123456789",
+      "formaPagamento": {
+        "id": 12345678
+      }
+    }
+  ],
+  "transporte": {
+    "fretePorConta": 0,
+    "frete": 20,
+    "quantidadeVolumes": 1,
+    "pesoBruto": 0.5,
+    "prazoEntrega": 10,
+    "contato": {
+      "id": 12345678,
+      "nome": "Transportador"
+    },
+    "etiqueta": {
+      "nome": "Transportador",
+      "endereco": "Olavo Bilac",
+      "numero": "914",
+      "complemento": "Sala 101",
+      "municipio": "Bento Gonçalves",
+      "uf": "RS",
+      "cep": "95702-000",
+      "bairro": "Imigrante",
+      "nomePais": "BRASIL"
+    },
+    "volumes": [
+      {
+        "id": 12345678,
+        "servico": "ALIAS_123",
+        "codigoRastreamento": "COD123BR"
+      }
+    ]
+  },
+  "vendedor": {
+    "id": 12345678
+  },
+  "intermediador": {
+    "cnpj": "13921649000197",
+    "nomeUsuario": "usuario"
+  },
+  "taxas": {
+    "taxaComissao": 1,
+    "custoFrete": 9.99,
+    "valorBase": 129.9
   }
 }

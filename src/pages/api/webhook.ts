@@ -3,6 +3,7 @@ import { sendConfirmationEmail, sendAlertEmail } from "./resend";
 import { getOrderNormalized, saveOrderNormalized, setupOrdersTable } from "./turso";
 import { createVenda } from "./bling-auth";
 import { buscarBlingId } from "../../data/bling-produtos";
+import { getShippingSpecs, calculatePackageDimensions } from "../../data/products";
 import { setupBlingTokensTable } from "./turso";
 
 const ASAAS_WEBHOOK_SECRET = import.meta.env.ASAAS_WEBHOOK_SECRET ?? "";
@@ -114,15 +115,31 @@ export const POST: APIRoute = async ({ request }) => {
         console.warn("[Webhook] Endereço incompleto no pedido — pulando Bling:", orderId);
       } else {
         try {
+          const itensComSpecs = itens.map((i: any) => {
+            const specs = getShippingSpecs(i.slug, i.tamanhoSelecionado);
+            return {
+              ...i,
+              specs,
+            };
+          });
+          const pesoBruto = itensComSpecs.reduce((s: number, i: any) => s + i.specs.weight * i.quantidade, 0);
+          const pkg = calculatePackageDimensions(itensComSpecs.map((i: any) => ({
+            slug: i.slug, selectedSize: i.tamanhoSelecionado, quantity: i.quantidade,
+          })));
+
           const result = await createVenda({
             nome,
             email,
             cpfCnpj,
             telefone,
-            itens: itens.map((i: any) => ({
+            itens: itensComSpecs.map((i: any) => ({
               blingId: buscarBlingId(i.slug, i.corVarianteSelecionada, i.tamanhoSelecionado) ?? i.blingId ?? i.produtoId ?? i.id,
               quantidade: i.quantidade,
               valor: i.preco,
+              peso: i.specs.weight,
+              altura: i.specs.height,
+              largura: i.specs.width,
+              comprimento: i.specs.length,
             })),
             total,
             endereco: {
@@ -139,6 +156,9 @@ export const POST: APIRoute = async ({ request }) => {
             descontoValor,
             descontoPercent,
             fretePreco: freteSelecionado?.price ?? 0,
+            pesoBruto,
+            quantidadeVolumes: 1,
+            volumes: [{ peso: pesoBruto, altura: pkg.height, largura: pkg.width, comprimento: pkg.length }],
           });
 
           const blingVendaId = result?.venda?.data?.id ?? null;
